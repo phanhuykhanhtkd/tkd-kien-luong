@@ -272,10 +272,10 @@ body {
 }
 .section-title {
   text-align: center;
-  font-size: 15px;
-  margin-bottom: 20px;
+  font-size: 24px;
+  margin-bottom: 35px;
   text-transform: uppercase;
-  font-weight: 50px;
+  font-weight: 700;
 }
 .section-title span {
   color: var(--red);
@@ -562,40 +562,66 @@ body {
   height: 100%;
   border: none;
 }
-/* HIỆU ỨNG CHỮ ĐỨNG YÊN - MÀU CHUYỂN ĐỘNG */
-.title-sparkle {
-  font-weight: 600;
+/* 1. Chữ chạy màu luân chuyển (Đỏ - Vàng - Xanh dương - Trắng) */
+.logo-sub-custom {
+  font-size: clamp(8px, 2.3vw, 11px);
+  font-weight: 800;
   text-transform: uppercase;
-  text-align: center;
-  font-size: 2rem;
-  display: block;
-  margin: 15px 0;
-
-  /* Dải màu: Đỏ - Vàng - Xanh dương - Trắng */
+  letter-spacing: 0.5px;
+  /* Hiệu ứng chạy màu */
   background: linear-gradient(
     to right,
-    #ff0000 0%,
-    #ffff00 25%,
-    #0000ff 50%,
-    #ffffff 75%,
-    #ff0000 100%
+    #ff0000,
+    #ffeb3b,
+    #2196f3,
+    #ffffff,
+    #ff0000
   );
-
-  background-size: 300% auto;
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-
-  /* Lệnh chạy màu trong 3 giây, lặp vô tận */
-  animation: move-colors 3s linear infinite;
+  animation: colorFlow 4s linear infinite;
 }
 
-/* Định nghĩa cách màu di chuyển */
-@keyframes move-colors {
-  0% {
-    background-position: 0% center;
+@keyframes colorFlow {
+  to {
+    background-position: 200% center;
   }
-  100% {
-    background-position: 300% center;
-  }
+}
+
+/* 2. Làm nút đóng (X) to và dễ bấm hơn */
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 35px; /* Tăng kích thước */
+  font-weight: bold;
+  color: var(--red); /* Đổi sang màu đỏ cho nổi bật */
+  cursor: pointer;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+/* 3. CSS cho nút xem PDF bên ngoài */
+.pdf-link-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #c4161c;
+  color: white !important;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.3s;
+}
+.pdf-link-btn:hover {
+  background: #1a237e;
 }
