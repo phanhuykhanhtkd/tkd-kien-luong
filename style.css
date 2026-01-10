@@ -272,10 +272,10 @@ body {
 }
 .section-title {
   text-align: center;
-  font-size: 20px;
-  margin-bottom: 32px;
+  font-size: 15px;
+  margin-bottom: 20px;
   text-transform: uppercase;
-  font-weight: 100;
+  font-weight: 50px;
 }
 .section-title span {
   color: var(--red);
