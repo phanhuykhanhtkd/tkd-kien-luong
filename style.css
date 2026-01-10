@@ -489,3 +489,113 @@ body {
 #values {
   margin-top: 50px !important; /* Bạn có thể tăng lên 60px hoặc 70px nếu muốn xuống thấp nữa */
 }
+/* Khung bài báo chuyên nghiệp */
+.detail-content {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Be Vietnam Pro", sans-serif;
+}
+
+.news-date {
+  color: #888;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  display: block;
+}
+.news-title {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: #d32f2f;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+.news-sapo {
+  font-size: 1.1em;
+  font-weight: 600;
+  font-style: italic;
+  color: #444;
+  line-height: 1.6;
+  border-left: 4px solid #d32f2f;
+  padding-left: 15px;
+  margin-bottom: 25px;
+}
+.news-text {
+  font-size: 1.05em;
+  line-height: 1.8;
+  text-align: justify;
+  color: #333;
+  white-space: pre-line;
+}
+
+/* Ảnh và chú thích */
+.news-img {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 20px;
+  display: block;
+}
+.news-caption {
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+  font-style: italic;
+  margin: 10px 0 25px 0;
+  display: block;
+}
+
+/* Khung Video & PDF (Tự thích nghi mọi màn hình) */
+.media-box {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  margin-top: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.media-box iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+/* HIỆU ỨNG CHỮ ĐỨNG YÊN - MÀU CHUYỂN ĐỘNG */
+.title-sparkle {
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 2rem;
+  display: block;
+  margin: 15px 0;
+
+  /* Dải màu: Đỏ - Vàng - Xanh dương - Trắng */
+  background: linear-gradient(
+    to right,
+    #ff0000 0%,
+    #ffff00 25%,
+    #0000ff 50%,
+    #ffffff 75%,
+    #ff0000 100%
+  );
+
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  /* Lệnh chạy màu trong 3 giây, lặp vô tận */
+  animation: move-colors 3s linear infinite;
+}
+
+/* Định nghĩa cách màu di chuyển */
+@keyframes move-colors {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 300% center;
+  }
+}
