@@ -153,29 +153,37 @@ function showFullNews(encodedData) {
   const data = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
   let mediaHTML = "";
 
-  // Xử lý ID Video thông minh
-  // Xử lý ID Video thông minh
+  // Xử lý Video
   if (data.vid) {
     let videoID = data.vid.trim();
-
-    // Đoạn tối ưu nằm ở đây:
     if (videoID.includes("v=")) {
       videoID = videoID.split("v=")[1].split("&")[0];
     } else if (videoID.includes("youtu.be/")) {
       videoID = videoID.split("youtu.be/")[1].split("?")[0];
     }
-
     mediaHTML += `<div class="media-box"><iframe src="https://www.youtube.com/embed/${videoID}" allowfullscreen></iframe></div>`;
   }
 
+  // Xử lý PDF (Xem trực tiếp + Nút dẫn link)
   if (data.pdf) {
+    // Chuyển link Drive sang dạng xem trước (preview)
     const previewPdf = data.pdf
       .replace("/view", "/preview")
       .replace("?usp=sharing", "");
+
     mediaHTML += `
-      <div style="margin-top:20px;">
-        <div class="media-box" style="padding-bottom:100%">
-          <iframe src="${previewPdf}"></iframe>
+      <div style="margin-top:20px; border-top: 1px dashed #ccc; padding-top: 15px;">
+        <p style="font-weight:bold; color:var(--blue); margin-bottom:10px;">📄 TÀI LIỆU ĐÍNH KÈM:</p>
+        
+        <div style="position:relative; padding-bottom:120%; height:0; overflow:hidden; border: 1px solid #ddd; border-radius:8px;">
+          <iframe src="${previewPdf}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"></iframe>
+        </div>
+        
+        <div style="text-align:center; margin-top:15px;">
+          <a href="${data.pdf}" target="_blank" 
+             style="display:inline-block; background:var(--red); color:white; padding:12px 25px; border-radius:30px; text-decoration:none; font-weight:bold; box-shadow: 0 4px 10px rgba(196, 22, 28, 0.3);">
+             📂 MỞ TÀI LIỆU TRONG TAB MỚI
+          </a>
         </div>
       </div>`;
   }
