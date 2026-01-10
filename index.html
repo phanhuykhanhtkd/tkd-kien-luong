@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CLB Taekwondo Kiên Lương - Hệ Thống Quản Lý & Thông Tin</title>
+    <meta
+      name="description"
+      content="Cổng thông tin chính thức CLB Taekwondo Kiên Lương. Tra cứu mã võ sinh, lịch tập luyện, đội ngũ HLV và tin tức võ đường mới nhất."
+    />
+    <meta
+      name="keywords"
+      content="Taekwondo Kiên Lương, học võ Kiên Lương, tra cứu võ sinh, Kiên Giang martial arts"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="CLB Taekwondo Kiên Lương - Hệ Thống Quản Lý"
+    />
+    <meta
+      property="og:description"
+      content="Rèn luyện bản lĩnh, kỷ luật và đam mê. Cập nhật thông tin võ đường nhanh chóng nhất."
+    />
+    <meta property="og:image" content="bìa.jpg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body data-theme="light">
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo" onclick="showHome()">
+          <img src="ảnh.jpg" alt="Logo Taekwondo Kiên Lương" />
+          <div class="logo-text-group">
+            <span class="logo-sub"
+              >CỔNG THÔNG TIN ĐIỆN TỬ CÂU LẠC BỘ VÕ THUẬT</span
+            >
+            <h1 class="logo-main">TAEKWONDO KIÊN LƯƠNG</h1>
+          </div>
+        </div>
+        <div class="nav-controls">
+          <button id="theme-toggle" class="theme-btn" title="Chế độ Sáng/Tối">
+            <span id="theme-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <h2 id="typewriter-text"></h2>
+          <div class="sub-slogan"></div>
+        </div>
+      </section>
+
+      <section class="quick-access">
+        <div class="container">
+          <div class="menu-grid">
+            <div
+              id="nav-home"
+              class="menu-item active-item"
+              onclick="showHome()"
+            >
+              <div class="menu-icon">🏠</div>
+              <span>Trang chủ</span>
+            </div>
+            <div
+              id="nav-coaches"
+              class="menu-item"
+              onclick="toggleSection('coaches')"
+            >
+              <div class="menu-icon">🥋</div>
+              <span>Ban Huấn luyện</span>
+            </div>
+            <div
+              id="nav-members"
+              class="menu-item"
+              onclick="toggleSection('members')"
+            >
+              <div class="menu-icon">👥</div>
+              <span>Thông tin hội viên</span>
+            </div>
+            <div
+              id="nav-locations"
+              class="menu-item"
+              onclick="toggleSection('locations')"
+            >
+              <div class="menu-icon">📍</div>
+              <span>Địa điểm tập luyện</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div id="home-content">
+        <section id="values" class="container">
+          <h2 class="section-title">GIÁ TRỊ <span>CỐT LÕI</span></h2>
+          <div class="grid">
+            <div class="card value-card">
+              <div class="value-img-container">
+                <img
+                  src="DMM.jpg"
+                  alt="TÔN SƯ TRỌNG ĐẠO – GIỮ VỮNG CHÍNH TÂM"
+                />
+              </div>
+              <div class="value-content">
+                <h4>🔥TÔN SƯ TRỌNG ĐẠO – GIỮ VỮNG CHÍNH TÂM</h4>
+                <p>
+                  Đây là nền tảng cao nhất của người học võ. Mỗi võ sinh luôn
+                  kính trọng thầy dạy, tuân thủ lễ nghi, rèn luyện đạo đức và
+                  hành xử đúng mực. Học võ trước hết là học làm người, lấy chính
+                  đạo làm kim chỉ nam trong tập luyện và cuộc sống...
+                </p>
+              </div>
+            </div>
+
+            <div class="card value-card">
+              <div class="value-img-container">
+                <img src="KLL.jpg" alt="Bản lĩnh - Kết nối" />
+              </div>
+              <div class="value-content">
+                <h4>🔥ĐAM MÊ – KỶ LUẬT – ĐOÀN KẾT – BẢN LĨNH – PHÁT TRIỂN</h4>
+                <p>
+                  Đam mê khơi nguồn động lực, kỷ luật tạo nên sức mạnh bền bỉ.
+                  Trong tinh thần đoàn kết, mỗi cá nhân được rèn giũa bản lĩnh,
+                  vượt qua thử thách và cùng nhau phát triển toàn diện, vững
+                  vàng trên con đường võ đạo và cuộc đời...
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section bg-light">
+          <div class="container">
+            <h3 class="section-title">HÌNH ẢNH <span>HOẠT ĐỘNG</span></h3>
+            <div class="gallery-grid" id="gallery-container">
+              <div class="gallery-item">
+                <img src="TQ.jpg" alt="Hoạt động 1" />
+              </div>
+              <div class="gallery-item">
+                <img src="DV.jpg" alt="Hoạt động 2" />
+              </div>
+              <div class="gallery-item">
+                <img src="bìa.jpg" alt="Hoạt động 3" />
+              </div>
+              <div class="gallery-item">
+                <img src="DH.jpg" alt="Hoạt động 4" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="container" id="news-dynamic-section"></div>
+        </section>
+      </div>
+
+      <div id="dynamic-content">
+        <section
+          id="coaches"
+          class="section content-section"
+          style="display: none"
+        >
+          <div class="container">
+            <h3 class="section-title">Đội ngũ <span>Huấn luyện viên</span></h3>
+            <div class="grid"></div>
+          </div>
+        </section>
+
+        <section
+          id="members"
+          class="section bg-light content-section"
+          style="display: none"
+        >
+          <div class="container">
+            <h3 class="section-title">Tra cứu <span>Hội viên</span></h3>
+            <div class="member-search-container">
+              <div class="search-box">
+                <input
+                  id="hv-input"
+                  type="text"
+                  placeholder="Nhập tên võ sinh để tra cứu..."
+                />
+                <button onclick="searchHV()" class="btn-search">Tra cứu</button>
+              </div>
+            </div>
+            <div id="hv-result">
+              <p class="search-placeholder">
+                Hệ thống tra cứu kết quả rèn luyện và mã số võ sinh.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="locations"
+          class="section content-section"
+          style="display: none"
+        >
+          <div class="container">
+            <h3 class="section-title">Khu vực <span>Tập luyện</span></h3>
+            <div class="grid"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <h3>LIÊN HỆ & FANPAGE</h3>
+        <div class="footer-divider"></div>
+
+        <div class="social-links">
+          <a
+            href="https://web.facebook.com/share/1C3LaNeUd5/?mibextid=wwXIfr&_rdc=1&_rdr"
+            target="_blank"
+            class="social-item"
+            >🔵 Fanpage Cơ sở Ba Hòn</a
+          >
+          <a
+            href="https://web.facebook.com/share/1HLMztSAzY/?mibextid=wwXIfr&_rdc=1&_rdr"
+            target="_blank"
+            class="social-item"
+            >🔵 Fanpage Cơ sở Kiên Lương</a
+          >
+          <a
+            href="https://web.facebook.com/share/1CAjRxoDCu/?mibextid=wwXIfr&_rdc=1&_rdr"
+            target="_blank"
+            class="social-item"
+            >🔵Fanpage Trường THPT Kiên Lương
+          </a>
+          <a
+            href="https://web.facebook.com/share/1MsBDYZmyB/?mibextid=wwXIfr&_rdc=1&_rdr"
+            target="_blank"
+            class="social-item"
+            >🔵Fanpage Cơ sở Hòa Điền
+          </a>
+          <a
+            href="https://youtube.com/@clbvothuattaekwondokienluong?si=IHa1oQWY7sgaSR2_"
+            target="_blank"
+            class="social-item"
+            >🔴 Kênh Youtube Võ Đường</a
+          >
+        </div>
+
+        <div class="contact-info" style="margin-top: 25px">
+          <p>📍 Địa chỉ: Xã Kiên Lương, Tỉnh An Giang</p>
+        </div>
+
+        <div class="footer-bottom-divider"></div>
+
+        <p class="copyright">
+          © 2026 Câu lạc bộ võ thuật Taekwondo Kiên Lương <br />
+          <span>Xin chào bạn!</span>
+        </p>
+      </div>
+    </footer>
+    <div id="infoModal" class="modal-overlay" style="display: none">
+      <div class="modal-box">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div id="modal-header"></div>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <div id="announcement-popup" class="modal-overlay" style="display: none">
+      <div class="modal-box popup-martial">
+        <span class="close-modal" onclick="closePopup()">&times;</span>
+        <div id="popup-header"></div>
+        <div id="popup-content"></div>
+        <button
+          class="btn-search"
+          style="width: 100%; margin-top: 20px"
+          onclick="closePopup()"
+        >
+          Đóng
+        </button>
+      </div>
+    </div>
+
+    <button id="back-to-top" title="Lên đầu trang">↑</button>
+
+    <script src="script.js"></script>
+  </body>
+</html>
