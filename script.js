@@ -138,6 +138,23 @@ function showFullNews(encodedData) {
   const data = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
   let mediaHTML = "";
 
+  // 1. XỬ LÝ ẢNH MINH HỌA - Đảm bảo cân đối và đẹp
+  let imageHTML = "";
+  if (data.i && !data.i.includes("placehold.co")) {
+    imageHTML = `
+            <div class="news-image-container">
+                <img src="${
+                  data.i
+                }" class="news-main-img" onerror="this.style.display='none'">
+                ${
+                  data.cap
+                    ? `<p class="news-image-caption"> ${data.cap}</p>`
+                    : ""
+                }
+            </div>`;
+  }
+
+  // 2. XỬ LÝ VIDEO
   if (data.vid) {
     let videoId = "";
     if (data.vid.includes("v="))
@@ -145,26 +162,82 @@ function showFullNews(encodedData) {
     else if (data.vid.includes("youtu.be/"))
       videoId = data.vid.split("youtu.be/")[1].split("?")[0];
     if (videoId) {
-      mediaHTML += `<div style="margin-top: 20px; padding: 15px; border-radius: 12px; background: #f9f9f9; border: 1px solid #ddd; text-align:center;"><p style="font-weight:bold; color:var(--blue);">🎬 VIDEO CLIP</p><div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background:#000;"><iframe src="https://www.youtube.com/embed/${videoId}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe></div><div style="margin-top:12px;"><a href="${data.vid}" target="_blank" style="display:inline-block; background:#ff0000; color:white; padding:10px 20px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:13px;">🚀 XEM TRÊN YOUTUBE</a></div></div>`;
+      mediaHTML += `
+                <div class="news-media-box">
+                    <div class="media-label">🎥 VIDEO NỔI BẬT</div>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>
+                    </div>
+                    <div style="text-align:center;"><a href="${data.vid}" target="_blank" class="btn-modern-red">XEM TRÊN YOUTUBE</a></div>
+                </div>`;
     }
   }
 
+  // 3. XỬ LÝ PDF
   if (data.pdf) {
     const pdfId = getDriveId(data.pdf);
     if (pdfId) {
-      mediaHTML += `<div style="margin-top:20px;"><p style="font-weight:bold; color:var(--blue); margin-bottom:10px;">📄 TÀI LIỆU ĐÍNH KÈM:</p><div style="position:relative; padding-bottom:120%; height:0; overflow:hidden; border: 1px solid #ddd; border-radius:8px;"><iframe src="https://drive.google.com/file/d/${pdfId}/preview" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"></iframe></div><div style="text-align:center; margin-top:12px;"><a href="https://drive.google.com/file/d/${pdfId}/view" target="_blank" style="display:inline-block; background:var(--blue); color:white; padding:10px 20px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:13px;">📂 MỞ FILE TOÀN MÀN HÌNH</a></div></div>`;
+      mediaHTML += `
+                <div class="news-media-box">
+                    <div class="media-label">📄 TÀI LIỆU CÔNG VĂN</div>
+                    <div class="pdf-wrapper">
+                        <iframe src="https://drive.google.com/file/d/${pdfId}/preview"></iframe>
+                    </div>
+                    <div style="text-align:center;"><a href="https://drive.google.com/file/d/${pdfId}/view" target="_blank" class="btn-modern-blue">MỞ TOÀN MÀN HÌNH</a></div>
+                </div>`;
     }
   }
 
-  const articleHTML = `<div class="detail-content"><span class="news-date">📅 Đăng ngày: ${
-    data.d
-  }</span><h1 class="news-title">${data.t}</h1><div class="news-text">${
-    data.c
-  }</div>${
-    data.i && !data.i.includes("placehold.co")
-      ? `<img src="${data.i}" class="news-img"><span class="news-caption">${data.cap}</span>`
-      : ""
-  }${mediaHTML}</div>`;
+  const articleHTML = `
+    <style>
+        .news-detail-container { font-family: 'Segoe UI', Arial, sans-serif; color: #333; line-height: 1.8; }
+        .news-meta { color: #888; font-size: 13px; margin-bottom: 10px; border-bottom: 1px dotted #ccc; padding-bottom: 8px; }
+        .news-header-title { font-size: 24px; font-weight: 800; color: #b30000; line-height: 1.4; margin-bottom: 15px; }
+        
+        /* Cấu trúc Sapo */
+        .news-sapo { font-size: 17px; font-weight: 700; color: #444; margin-bottom: 20px; line-height: 1.6; border-left: 4px solid #b30000; padding: 10px 15px; background: #f9f9f9; }
+
+        /* Tối ưu hiển thị ảnh cân đối */
+        .news-image-container { margin: 20px 0; text-align: center; }
+        .news-main-img { 
+            width: 100%; 
+            max-height: 400px; /* Giới hạn chiều cao để không choán màn hình */
+            object-fit: contain; /* Giữ nguyên tỷ lệ ảnh, không bị méo hay mất chi tiết */
+            border-radius: 8px; 
+            background: #eee; /* Nền xám nhẹ nếu ảnh chưa tải kịp */
+        }
+        .news-image-caption { font-size: 14px; color: #777; margin-top: 8px; font-style: italic; }
+
+        .news-body { font-size: 16.5px; text-align: justify; white-space: pre-line; margin-bottom: 30px; }
+
+        .news-media-box { background: #f4f4f4; border-radius: 12px; padding: 15px; margin-top: 25px; border: 1px solid #eee; }
+        .media-label { font-weight: 700; font-size: 12px; color: #999; margin-bottom: 12px; text-align: center; letter-spacing: 1px; }
+        .video-wrapper, .pdf-wrapper { position: relative; width: 100%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 15px; }
+        .video-wrapper { padding-bottom: 56.25%; }
+        .pdf-wrapper { padding-bottom: 120%; }
+        .video-wrapper iframe, .pdf-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        .btn-modern-red, .btn-modern-blue { display: inline-block; padding: 10px 20px; border-radius: 4px; font-weight: 700; text-decoration: none; font-size: 12px; }
+        .btn-modern-red { background: #cc0000; color: #fff; }
+        .btn-modern-blue { background: #0056b3; color: #fff; }
+    </style>
+    
+    <div class="news-detail-container">
+        <div class="news-meta">📅 ${data.d} | Taekwondo Kiên Lương</div>
+        <h1 class="news-header-title">${data.t}</h1>
+        <div class="news-sapo">${
+          data.s ||
+          "Thông báo từ Ban huấn luyện Câu lạc bộ võ thuật Taekwondo Kiên Lương."
+        }</div>
+        
+        ${imageHTML}
+
+        <div class="news-body">${data.c}</div>
+        
+        ${mediaHTML}
+        <div style="height: 20px;"></div>
+    </div>`;
+
   openModal("", articleHTML);
 }
 
