@@ -1,12 +1,12 @@
 /**
- * HỆ THỐNG QUẢN LÝ CLB TAEKWONDO KIÊN LƯƠNG - PHIÊN BẢN HOÀN THIỆN 2026
- * Tính năng: Fix Năm sinh, Hiển thị PDF/Video kèm nút bấm, Bảo mật HLV, Tra cứu HV đầy đủ.
+ * HỆ THỐNG QUẢN LÝ CLB TAEKWONDO KIÊN LƯƠNG - PHIÊN BẢN CUỐI CÙNG (ULTIMATE) 2026
+ * Đầy đủ: Enter Search, Nút PDF/Video, Fix Năm sinh, Bảo mật tối giản, Full Hội viên.
  */
 
 const API_URL =
   "https://script.google.com/macros/s/AKfycbzF4YvnCbgVjo49bkPvV4zmnJUyTupg8JHDch2sxDcWXor3W6SiAKU03aGpW823Q4CMKg/exec";
 
-// --- 1. CÔNG CỤ XỬ LÝ DỮ LIỆU ---
+// --- 1. TIỆN ÍCH DỮ LIỆU (GIỮ NGUYÊN & TỐI ƯU) ---
 const cleanKey = (str) => {
   if (!str) return "";
   return str
@@ -18,7 +18,6 @@ const cleanKey = (str) => {
     .replace(/\s+/g, "");
 };
 
-// Lấy ID từ link Google Drive (Dùng cho Ảnh và PDF)
 const getDriveId = (url) => {
   if (!url || typeof url !== "string") return "";
   const regExp = /(?:id=|\/d\/|folderview\?id=)([\w-]+)/;
@@ -26,7 +25,7 @@ const getDriveId = (url) => {
   return match && match[1] ? match[1] : "";
 };
 
-// Sửa lỗi năm sinh: Đảm bảo chỉ lấy 4 số năm
+// Sửa lỗi năm sinh: Ép kiểu chuỗi và bóc tách chuẩn 4 số
 const formatYearOnly = (val) => {
   if (!val || val === "---" || val === "") return "---";
   const strVal = val.toString();
@@ -44,6 +43,11 @@ const formatFullDate = (val) => {
     : val.toString();
 };
 
+const convertDriveLink = (url) => {
+  const id = getDriveId(url);
+  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w800` : url;
+};
+
 async function fetchData(tabName) {
   try {
     const res = await fetch(`${API_URL}?sheet=${encodeURIComponent(tabName)}`);
@@ -58,7 +62,7 @@ async function fetchData(tabName) {
   }
 }
 
-// --- 2. HIỆU ỨNG GIAO DIỆN ---
+// --- 2. HIỆU ỨNG GIAO DIỆN (GIỮ NGUYÊN) ---
 function runTypewriter() {
   const textElement = document.getElementById("typewriter-text");
   if (!textElement) return;
@@ -90,7 +94,7 @@ function runTypewriter() {
   type();
 }
 
-// --- 3. BẢN TIN VÕ ĐƯỜNG (KÈM NÚT PDF & YOUTUBE) ---
+// --- 3. BẢN TIN VÕ ĐƯỜNG (FULL PDF + YOUTUBE + NÚT BẤM) ---
 async function loadNews() {
   const container = document.getElementById("news-dynamic-section");
   if (!container) return;
@@ -116,15 +120,12 @@ async function loadNews() {
     const newsObj = {
       t: news.tieude || "Thông báo",
       d: formatFullDate(news.ngaydang || news.ngay),
+      s: news.sapo || "",
       c: (news.noidung || "").replace(/\n/g, "<br>"),
-      i: news.linkanh
-        ? `https://drive.google.com/thumbnail?id=${getDriveId(
-            news.linkanh
-          )}&sz=w800`
-        : LOGO_BG,
+      i: news.linkanh ? convertDriveLink(news.linkanh) : LOGO_BG,
+      cap: news.chuthichanh || "",
       vid: news.linkvideo || "",
       pdf: news.linkfile || "",
-      cap: news.chuthichanh || "",
     };
     const dataStr = btoa(unescape(encodeURIComponent(JSON.stringify(newsObj))));
     const cardHTML = `<div class="card"><div style="width:100%; height:180px; overflow:hidden; border-radius:8px 8px 0 0;"><img src="${newsObj.i}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='${LOGO_BG}'"></div><div style="padding:15px;"><small style="color:var(--text-muted);">📅 ${newsObj.d}</small><h4 style="color:var(--blue); margin:10px 0; height:45px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${newsObj.t}</h4><button class="btn-search" style="width:100%;" onclick="showFullNews('${dataStr}')">XEM CHI TIẾT</button></div></div>`;
@@ -137,58 +138,37 @@ function showFullNews(encodedData) {
   const data = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
   let mediaHTML = "";
 
-  // Xử lý Video YouTube & Nút bấm
   if (data.vid) {
     let videoId = "";
     if (data.vid.includes("v="))
       videoId = data.vid.split("v=")[1].split("&")[0];
     else if (data.vid.includes("youtu.be/"))
       videoId = data.vid.split("youtu.be/")[1].split("?")[0];
-
     if (videoId) {
-      mediaHTML += `
-                <div style="margin-top: 20px; padding: 15px; border-radius: 12px; background: #f9f9f9; border: 1px solid #ddd;">
-                    <p style="font-weight:bold; color:var(--blue); margin-bottom:10px; text-align:center;">🎬 VIDEO CLIP</p>
-                    <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background:#000;">
-                        <iframe src="https://www.youtube.com/embed/${videoId}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
-                    </div>
-                    <div style="text-align:center; margin-top:12px;">
-                        <a href="${data.vid}" target="_blank" style="display:inline-block; background:#ff0000; color:white; padding:10px 20px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:13px;">🚀 XEM TRÊN YOUTUBE</a>
-                    </div>
-                </div>`;
+      mediaHTML += `<div style="margin-top: 20px; padding: 15px; border-radius: 12px; background: #f9f9f9; border: 1px solid #ddd; text-align:center;"><p style="font-weight:bold; color:var(--blue);">🎬 VIDEO CLIP</p><div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background:#000;"><iframe src="https://www.youtube.com/embed/${videoId}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe></div><div style="margin-top:12px;"><a href="${data.vid}" target="_blank" style="display:inline-block; background:#ff0000; color:white; padding:10px 20px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:13px;">🚀 XEM TRÊN YOUTUBE</a></div></div>`;
     }
   }
 
-  // Xử lý PDF & Nút bấm
   if (data.pdf) {
     const pdfId = getDriveId(data.pdf);
     if (pdfId) {
-      mediaHTML += `
-                <div style="margin-top:20px;">
-                    <p style="font-weight:bold; color:var(--blue); margin-bottom:10px;">📄 TÀI LIỆU ĐÍNH KÈM:</p>
-                    <div style="position:relative; padding-bottom:120%; height:0; overflow:hidden; border: 1px solid #ddd; border-radius:8px;">
-                        <iframe src="https://drive.google.com/file/d/${pdfId}/preview" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"></iframe>
-                    </div>
-                    <div style="text-align:center; margin-top:12px;">
-                        <a href="https://drive.google.com/file/d/${pdfId}/view" target="_blank" style="display:inline-block; background:var(--blue); color:white; padding:10px 20px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:13px;">📂 MỞ FILE TOÀN MÀN HÌNH</a>
-                    </div>
-                </div>`;
+      mediaHTML += `<div style="margin-top:20px;"><p style="font-weight:bold; color:var(--blue); margin-bottom:10px;">📄 TÀI LIỆU ĐÍNH KÈM:</p><div style="position:relative; padding-bottom:120%; height:0; overflow:hidden; border: 1px solid #ddd; border-radius:8px;"><iframe src="https://drive.google.com/file/d/${pdfId}/preview" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"></iframe></div><div style="text-align:center; margin-top:12px;"><a href="https://drive.google.com/file/d/${pdfId}/view" target="_blank" style="display:inline-block; background:var(--blue); color:white; padding:10px 20px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:13px;">📂 MỞ FILE TOÀN MÀN HÌNH</a></div></div>`;
     }
   }
 
-  const articleHTML = `<div class="detail-content"><span class="news-date">📅 Đăng ngày: ${data.d}</span><h1 class="news-title">${data.t}</h1><div class="news-text">${data.c}</div>${mediaHTML}</div>`;
+  const articleHTML = `<div class="detail-content"><span class="news-date">📅 Đăng ngày: ${
+    data.d
+  }</span><h1 class="news-title">${data.t}</h1><div class="news-text">${
+    data.c
+  }</div>${
+    data.i && !data.i.includes("placehold.co")
+      ? `<img src="${data.i}" class="news-img"><span class="news-caption">${data.cap}</span>`
+      : ""
+  }${mediaHTML}</div>`;
   openModal("", articleHTML);
 }
 
-function toggleOldNews() {
-  const oldGrid = document.getElementById("news-grid-old");
-  const btn = document.querySelector("#more-news-btn-container button");
-  const isOpen = oldGrid.style.display === "grid";
-  oldGrid.style.display = isOpen ? "none" : "grid";
-  btn.innerHTML = isOpen ? "📂 XEM CÁC TIN CŨ HƠN" : "⬆️ THU GỌN TIN CŨ";
-}
-
-// --- 4. TRA CỨU HỘI VIÊN (ĐẦY ĐỦ THÔNG TIN) ---
+// --- 4. TRA CỨU HỘI VIÊN (FULL INFO + ENTER) ---
 async function searchHV() {
   const input = document.getElementById("hv-input").value.trim().toLowerCase();
   const resDiv = document.getElementById("hv-result");
@@ -210,26 +190,28 @@ async function searchHV() {
     resDiv.innerHTML += `
       <div class="martial-id-card" style="max-width: 450px; margin: 25px auto; border: 1px solid var(--border); border-top: 6px solid var(--red); border-radius: 12px; background: white; box-shadow: 0 10px 30px var(--shadow); overflow: hidden; animation: fadeIn 0.5s;">
         <div style="background: var(--gray); padding: 12px 20px; display: flex; justify-content: space-between; align-items:center;">
-          <span style="font-weight: 700; color: var(--blue);">🆔 Mã HV: ${maHV}</span>
-          <button onclick="copyToClipboard('${maHV}')" style="background:var(--red); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:11px;">SAO CHÉP</button>
+          <span style="font-weight: 700; color: var(--blue);">🆔 Mã hội viên: ${maHV}</span>
+          <button onclick="copyToClipboard('${maHV}')" style="background:var(--red); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:11px;">COPY</button>
         </div>
         <div style="padding: 20px; text-align: left;">
-          <p style="margin-bottom:8px;">👤 <strong>Họ tên:</strong> <span style="color:var(--red); text-transform:uppercase; font-weight:bold;">${
+          <p>👤 <strong>Họ tên:</strong> <span style="color:var(--red); text-transform:uppercase; font-weight:bold;">${
             found.hovaten
           }</span></p>
-          <p style="margin-bottom:8px;">📅 <strong>Ngày sinh:</strong> ${formatFullDate(
+          <p>📅 <strong>Ngày sinh:</strong> ${formatFullDate(
             found.namsinh || found.ngaysinh
           )}</p>
-          <p style="margin-bottom:8px;">🏢 <strong>Mã CLB:</strong> ${
-            found.maclb || "---"
-          }</p>
-          <p style="margin-bottom:0;">🌍 <strong>Tổ chức:</strong> ${toChuc}</p>
+          <p>🏢 <strong>Mã CLB:</strong> ${found.maclb || "---"}</p>
+          <p>🌍 <strong>Tổ chức:</strong> ${toChuc}</p>
         </div>
       </div>`;
   });
 }
 
-// --- 5. HLV & BẢO MẬT (FIX NĂM SINH) ---
+function handleHVEnter(e) {
+  if (e.key === "Enter") searchHV();
+}
+
+// --- 5. HLV & XÁC THỰC (GỌN NHẸ + ENTER + FIX NĂM SINH) ---
 async function loadCoaches() {
   const grid = document.querySelector("#coaches .grid");
   if (!grid) return;
@@ -241,24 +223,28 @@ async function loadCoaches() {
     grid.innerHTML += `<div class="card"><h3 style="color:var(--blue);">🥋 ${
       hlv.hovaten
     }</h3><p>🎖️ Chức vụ: ${
-      hlv.chucvu || "HLV"
+      hlv.chucvu || "---"
     }</p><button class="btn-search" style="width:100%; margin-top:10px;" onclick="askHLVPassword('${hlvData}')">HỒ SƠ</button></div>`;
   });
 }
 
 function askHLVPassword(encodedData) {
-  const hlv = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
   const authHTML = `
-    <div style="text-align:center; padding: 15px;">
+    <div style="text-align:center; padding: 20px;">
       <div style="font-size: 50px; margin-bottom: 15px;">🔒</div>
-      <h3 style="color:var(--blue); margin-bottom: 8px;">XÁC THỰC BẢO MẬT</h3>
+      <h3 style="color:var(--blue); margin-bottom: 10px;">XÁC THỰC BẢO MẬT</h3>
       <p style="font-size: 14px; color: #555; margin-bottom: 20px;">Vui lòng nhập mật khẩu</p>
-      <input type="password" id="hlv-pass-input" placeholder="********" style="width: 100%; max-width: 250px; padding: 12px; border: 2px solid var(--border); border-radius: 8px; text-align: center; font-size: 18px; margin-bottom: 20px; outline:none;">
+      <input type="password" id="hlv-pass-input" placeholder="********" onkeypress="handleHLVEnter(event, '${encodedData}')"
+             style="width: 100%; max-width: 250px; padding: 12px; border: 2px solid var(--border); border-radius: 8px; text-align: center; font-size: 18px; margin-bottom: 20px; outline:none;">
       <div id="auth-loading" style="display:none; margin-bottom: 20px;"><div class="taichi" style="width:40px; height:40px; margin: 0 auto;"></div></div>
       <button id="auth-btn" class="btn-search" style="width: 100%; max-width: 250px;" onclick="verifyHLV('${encodedData}')">XÁC NHẬN</button>
     </div>`;
   openModal("BẢO MẬT", authHTML);
   setTimeout(() => document.getElementById("hlv-pass-input")?.focus(), 500);
+}
+
+function handleHLVEnter(e, data) {
+  if (e.key === "Enter") verifyHLV(data);
 }
 
 function verifyHLV(encodedData) {
@@ -276,8 +262,7 @@ function verifyHLV(encodedData) {
       ? hlv.sodienthoai.toString().trim()
       : "";
     if (inputPass === correctPass) {
-      const detailHTML = `
-        <div style="text-align:left; line-height: 2.2; padding: 5px;">
+      const detailHTML = `<div style="text-align:left; line-height: 2.2; padding: 5px;">
           <p>👤 <strong>Họ tên:</strong> <span style="color:var(--red); font-weight:bold; text-transform:uppercase;">${
             hlv.hovaten
           }</span></p>
@@ -291,7 +276,7 @@ function verifyHLV(encodedData) {
         hlv.sodienthoai
       }</a></p>
         </div>`;
-      openModal(`<h2>🥋 HỒ SƠ HUẤN LUYỆN VIÊN</h2>`, detailHTML);
+      openModal(`<h2>🥋THÔNG TIN CHI TIẾT</h2>`, detailHTML);
     } else {
       loading.style.display = "none";
       btn.style.display = "block";
@@ -300,7 +285,7 @@ function verifyHLV(encodedData) {
   }, 800);
 }
 
-// --- 6. KHU TẬP & ĐIỀU HƯỚNG ---
+// --- 6. KHU TẬP, MODAL & ĐIỀU HƯỚNG (GIỮ NGUYÊN) ---
 async function loadLocations() {
   const grid = document.querySelector("#locations .grid");
   if (!grid) return;
@@ -308,7 +293,7 @@ async function loadLocations() {
   const data = await fetchData("KHU TẬP");
   grid.innerHTML = "";
   data.forEach((loc) => {
-    grid.innerHTML += `<div class="card"><h3 style="color:var(--red);">📍 ${loc.khuvuc}</h3><p><strong>🏠 Đơn vị:</strong> ${loc.tencaulacbo}</p><p><strong></p><button class="btn-search" style="width:100%; margin-top:10px; background:var(--blue);" onclick="showLocDetail(\`${loc.khuvuc}\`, \`${loc.tencaulacbo}\`, \`${loc.huanluyenvienphutrach}\`, \`${loc.thoigian}\`, \`${loc.sodienthoai}\`)">CHI TIẾT</button></div>`;
+    grid.innerHTML += `<div class="card"><h3 style="color:var(--red);">📍 ${loc.khuvuc}</h3><p><strong>🏠 Đơn vị:</strong> ${loc.tencaulacbo}</p><p><strong>🥋 HLV:</strong> ${loc.huanluyenvienphutrach}</p><button class="btn-search" style="width:100%; margin-top:10px; background:var(--blue);" onclick="showLocDetail(\`${loc.khuvuc}\`, \`${loc.tencaulacbo}\`, \`${loc.huanluyenvienphutrach}\`, \`${loc.thoigian}\`, \`${loc.sodienthoai}\`)">CHI TIẾT</button></div>`;
   });
 }
 
@@ -339,8 +324,7 @@ function toggleSection(id) {
   document
     .querySelectorAll(".menu-item")
     .forEach((m) => m.classList.remove("active-item"));
-  const btn = document.getElementById("nav-" + id);
-  if (btn) btn.classList.add("active-item");
+  document.getElementById("nav-" + id)?.classList.add("active-item");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -352,9 +336,17 @@ function showHome() {
   document
     .querySelectorAll(".menu-item")
     .forEach((m) => m.classList.remove("active-item"));
-  document.getElementById("nav-home").classList.add("active-item");
+  document.getElementById("nav-home")?.classList.add("active-item");
   loadNews();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function toggleOldNews() {
+  const old = document.getElementById("news-grid-old");
+  const btn = document.querySelector("#more-news-btn-container button");
+  const isOpen = old.style.display === "grid";
+  old.style.display = isOpen ? "none" : "grid";
+  btn.innerHTML = isOpen ? "📂 XEM CÁC TIN CŨ HƠN" : "⬆️ THU GỌN TIN CŨ";
 }
 
 function copyToClipboard(t) {
@@ -364,6 +356,9 @@ function copyToClipboard(t) {
 window.onload = () => {
   runTypewriter();
   showHome();
+  const hvInput = document.getElementById("hv-input");
+  if (hvInput) hvInput.addEventListener("keypress", handleHVEnter);
+
   const themeBtn = document.getElementById("theme-toggle");
   if (themeBtn)
     themeBtn.onclick = () => {
