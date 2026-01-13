@@ -625,3 +625,351 @@ body {
 .pdf-link-btn:hover {
   background: #1a237e;
 }
+/* Thiết kế nút bấm chuyển hướng YouTube */
+.btn-go-youtube {
+  display: inline-block;
+  background-color: #ff0000; /* Màu đỏ YouTube */
+  color: white !important;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 50px; /* Bo tròn 2 đầu */
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.btn-go-youtube:hover {
+  background-color: white;
+  color: #ff0000 !important;
+  border: 2px solid #ff0000;
+  transform: translateY(-3px); /* Nhấc nhẹ nút lên khi rê chuột */
+}
+/* Giới hạn văn bản ở 3 dòng */
+.content-collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Hiện 3 dòng, muốn hiện thêm thì chỉnh số này */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+/* Khi mở rộng sẽ hiện toàn bộ */
+.content-expanded {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+}
+
+/* Nút Xem tiếp */
+.read-more-btn {
+  color: #ff4500;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.read-more-btn:hover {
+  text-decoration: underline;
+}
+/* =========================
+   10. GIAI ĐOẠN 2: BỔ SUNG GIAO DIỆN MỚI
+   ========================= */
+
+/* Menu con (Sub-menu) tinh tế */
+.sub-menu-grid {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.sub-menu-btn {
+  padding: 12px 20px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px var(--shadow);
+}
+
+.sub-menu-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.sub-menu-btn.active {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+}
+
+/* Ẩn/Hiện nội dung con */
+.sub-content {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Bảng vàng vinh danh (Achievement) --- */
+.gold-honor-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 25px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.honor-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.honor-medal {
+  font-size: 50px;
+  display: block;
+}
+.honor-title {
+  color: #b38f00;
+  font-weight: 900;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.athlete-info {
+  display: flex;
+  justify-content: space-around;
+  background: #fdfaf0;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #f0e6cc;
+}
+
+.info-item {
+  text-align: center;
+}
+.info-label {
+  display: block;
+  font-size: 10px;
+  color: #999;
+}
+.info-val {
+  font-weight: 700;
+  color: #333;
+  font-size: 14px;
+}
+
+.achievement-content {
+  border-left: 4px solid #ffd700;
+  padding-left: 15px;
+}
+
+.tournament-name {
+  color: #b30000;
+  font-weight: 800;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.achievement-list {
+  list-style: none;
+  padding: 0;
+}
+.achievement-list li {
+  padding: 5px 0 5px 20px;
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+.achievement-list li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  color: #ffd700;
+}
+
+/* --- Bảng thăng cấp (Promotion) --- */
+.promotion-card {
+  background: #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+.promo-header {
+  background: #003366;
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+.promo-body {
+  padding: 20px;
+}
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.info-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+.label-cell {
+  color: #777;
+  font-size: 14px;
+}
+.value-cell {
+  text-align: right;
+  font-weight: 700;
+  color: #333;
+}
+
+.result-section {
+  text-align: center;
+  padding: 15px;
+  background: #f8f9fa;
+  margin-top: 15px;
+  border-radius: 10px;
+}
+.status-badge {
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-weight: 800;
+  color: white;
+}
+.status-pass {
+  background: #28a745;
+}
+.status-fail {
+  background: #dc3545;
+}
+
+/* Tùy chỉnh riêng cho nút tra cứu các mục mới */
+#search-achieve-box .btn-search {
+  background: #b38f00;
+}
+#search-promo-box .btn-search {
+  background: #003366;
+}
+
+/* ================================================================
+   GIAO DIỆN HÌNH ẢNH & VIDEO CHUYÊN NGHIỆP
+   ================================================================ */
+
+/* Lưới hiển thị ảnh */
+.gallery-grid,
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  padding: 20px 0;
+}
+
+/* Thẻ Card chứa ảnh/video */
+.gallery-card,
+.video-card {
+  background: #ffffff;
+  border-radius: 16px; /* Bo góc hiện đại */
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Đổ bóng mượt */
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: fit-content; /* QUAN TRỌNG: Giúp xóa đuôi trắng khi không có chữ */
+  border: 1px solid #f0f0f0;
+}
+
+/* Hiệu ứng nhấc lên khi di chuột vào */
+.gallery-card:hover,
+.video-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Khung ảnh vuông và hiệu ứng Zoom */
+.gallery-img-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3; /* Tỷ lệ ảnh chuẩn đẹp */
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.gallery-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gallery-card:hover .gallery-img-wrapper img {
+  transform: scale(1.1);
+}
+
+/* Khung Video chuẩn 16:9 */
+.video-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.video-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Phần Chú thích (Chỉ hiện khi có nội dung) */
+/* Phần Chú thích chuyên nghiệp (Chữ nghiêng, nhỏ, tinh tế) */
+.media-caption {
+  padding: 12px 15px;
+  font-size: 13px; /* Nhỏ lại một chút (chuẩn là 13px-14px) */
+  font-style: italic; /* Chữ nghiêng */
+  font-weight: 500; /* Độ đậm vừa phải */
+  text-align: center;
+  color: #555; /* Màu xám đậm chuyên nghiệp */
+  background: #ffffff;
+  border-top: 1px solid #f1f1f1;
+  line-height: 1.5;
+  letter-spacing: 0.3px; /* Khoảng cách chữ giúp dễ đọc và sang hơn */
+  font-family: "Segoe UI", Roboto, sans-serif; /* Font chữ hiện đại */
+}
+
+/* Hiệu ứng khi di chuột vào Card thì chữ đậm lên một chút */
+.gallery-card:hover .media-caption,
+.video-card:hover .media-caption {
+  color: #d32f2f; /* Chuyển sang màu đỏ võ đạo khi hover */
+  transition: color 0.3s ease;
+}
+
+/* Nút Xem thêm */
+.btn-search {
+  background: #004693;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-search:hover {
+  background: #d32f2f;
+  box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
+}
