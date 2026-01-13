@@ -1,40 +1,22 @@
-/**
- * HỆ THỐNG QUẢN LÝ CLB TAEKWONDO KIÊN LƯƠNG - PHIÊN BẢN CUỐI CÙNG (ULTIMATE) 2026
- * Đầy đủ: Enter Search, Nút PDF/Video, Fix Năm sinh, Bảo mật tối giản, Full Hội viên.
- */
-
 const API_URL =
   "https://script.google.com/macros/s/AKfycbzF4YvnCbgVjo49bkPvV4zmnJUyTupg8JHDch2sxDcWXor3W6SiAKU03aGpW823Q4CMKg/exec";
+const systemCache = {};
 
-// --- 1. TIỆN ÍCH DỮ LIỆU (GIỮ NGUYÊN & TỐI ƯU) ---
-const cleanKey = (str) => {
-  if (!str) return "";
-  return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D")
-    .toLowerCase()
-    .replace(/\s+/g, "");
-};
-
-const getDriveId = (url) => {
-  if (!url || typeof url !== "string") return "";
-  const regExp = /(?:id=|\/d\/|folderview\?id=)([\w-]+)/;
-  const match = url.match(regExp);
-  return match && match[1] ? match[1] : "";
-};
-
-// Sửa lỗi năm sinh: Ép kiểu chuỗi và bóc tách chuẩn 4 số
-const formatYearOnly = (val) => {
-  if (!val || val === "---" || val === "") return "---";
-  const strVal = val.toString();
-  const match = strVal.match(/\d{4}/);
-  return match ? match[0] : strVal;
-};
+// --- 1. TIỆN ÍCH ---
+const cleanKey = (str) =>
+  !str
+    ? ""
+    : str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/[^a-z0-9]/g, "");
 
 const formatFullDate = (val) => {
-  if (!val || val === "---" || val === "") return "---";
+  if (!val || val === "---") return "---";
   let d = new Date(val);
   return !isNaN(d.getTime())
     ? `${String(d.getDate()).padStart(2, "0")}/${String(
@@ -43,362 +25,511 @@ const formatFullDate = (val) => {
     : val.toString();
 };
 
-const convertDriveLink = (url) => {
-  const id = getDriveId(url);
-  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w800` : url;
+const getDriveId = (url) => {
+  const regExp = /(?:id=|\/d\/|folderview\?id=)([\w-]+)/;
+  const match = (url || "").match(regExp);
+  return match ? match[1] : "";
 };
 
-async function fetchData(tabName) {
+// --- 2. BẢO MẬT & KHÓA 8 TIẾNG ---
+function isSystemLocked() {
+  const lockUntil = localStorage.getItem("tkd_lock_time");
+  if (lockUntil && new Date().getTime() < lockUntil) {
+    const remainMs = lockUntil - new Date().getTime();
+    const h = Math.floor(remainMs / 3600000);
+    const m = Math.floor((remainMs % 3600000) / 60000);
+    alert(
+      `🔒 Hệ thống đang khóa bảo mật.\nVui lòng quay lại sau: ${h} giờ ${m} phút.`
+    );
+    return true;
+  }
+  return false;
+}
+
+// --- 3. TẢI DỮ LIỆU ---
+async function fetchData(tabName, containerId) {
+  const el = document.getElementById(containerId);
+  const grid = el ? el.querySelector(".grid") || el : null;
+  if (grid) grid.innerHTML = '<div class="taichi"></div>';
+  if (systemCache[tabName]) return systemCache[tabName];
   try {
     const res = await fetch(`${API_URL}?sheet=${encodeURIComponent(tabName)}`);
     const data = await res.json();
-    return data.map((item) => {
+    const cleaned = data.map((item) => {
       let newItem = {};
       for (let key in item) newItem[cleanKey(key)] = item[key];
       return newItem;
     });
+    systemCache[tabName] = cleaned;
+    return cleaned;
   } catch (e) {
     return [];
   }
 }
 
-// --- 2. HIỆU ỨNG GIAO DIỆN (GIỮ NGUYÊN) ---
-function runTypewriter() {
-  const textElement = document.getElementById("typewriter-text");
-  if (!textElement) return;
-  const phrases = [
-    "CHÀO MỪNG BẠN ĐẾN VỚI TAEKWONDO KIÊN LƯƠNG",
-    "NƠI NUÔI DƯỠNG ĐAM MÊ VÕ THUẬT",
-    "KỶ LUẬT VÀ RÈN LUYỆN BẢN LĨNH",
-  ];
-  let pIdx = 0,
-    cIdx = 0,
-    isDeleting = false;
-  function type() {
-    const current = phrases[pIdx];
-    textElement.textContent = isDeleting
-      ? current.substring(0, cIdx - 1)
-      : current.substring(0, cIdx + 1);
-    cIdx = isDeleting ? cIdx - 1 : cIdx + 1;
-    let speed = isDeleting ? 50 : 100;
-    if (!isDeleting && cIdx === current.length) {
-      isDeleting = true;
-      speed = 2000;
-    } else if (isDeleting && cIdx === 0) {
-      isDeleting = false;
-      pIdx = (pIdx + 1) % phrases.length;
-      speed = 500;
-    }
-    setTimeout(type, speed);
+// --- 4. GIÁ TRỊ CỐT LÕI (NÚT XEM TIẾP) ---
+function toggleReadMore(btn) {
+  const p = btn.previousElementSibling;
+  if (p) {
+    p.classList.toggle("content-collapsed");
+    p.classList.toggle("content-expanded");
+    btn.innerText = p.classList.contains("content-collapsed")
+      ? "Xem tiếp..."
+      : "Thu gọn";
   }
-  type();
 }
 
-// --- 3. BẢN TIN VÕ ĐƯỜNG (FULL PDF + YOUTUBE + NÚT BẤM) ---
-async function loadNews() {
+// --- 5. BẢN TIN VÕ ĐƯỜNG (PHONG CÁCH BÁO ĐIỆN TỬ - PHIÊN BẢN HOÀN HẢO) ---
+
+async function loadNews(showAll = false) {
   const container = document.getElementById("news-dynamic-section");
   if (!container) return;
-  container.innerHTML = '<div class="taichi"></div>';
-  const data = await fetchData("Thông báo");
-  const sortedData = data.reverse();
 
-  container.innerHTML = `
-        <h3 class="section-title">📢 BẢN TIN <span>VÕ ĐƯỜNG</span></h3>
-        <div id="news-grid-latest" class="grid"></div>
-        <div id="more-news-btn-container" style="text-align:center; margin-top: 30px;">
-          <button class="btn-search" style="background:var(--gray); color:var(--blue); border:1px solid var(--blue); padding:10px 25px;" onclick="toggleOldNews()">📂 XEM TIN CŨ HƠN</button>
-        </div>
-        <div id="news-grid-old" class="grid" style="display:none; margin-top: 25px; border-top: 2px dashed var(--border); padding-top: 25px;"></div>
-    `;
+  // Hiển thị trạng thái đang tải
+  container.innerHTML =
+    '<div style="text-align:center; padding:20px; color:var(--text-muted);">Đang tải bản tin...</div>';
 
-  const latestGrid = document.getElementById("news-grid-latest");
-  const oldGrid = document.getElementById("news-grid-old");
-  const LOGO_BG =
-    "https://placehold.co/600x400/eeeeee/red?text=TAEKWONDO+KIEN+LUONG";
+  const data = await fetchData("Thông báo", "news-dynamic-section");
+  if (!data || data.length === 0) {
+    container.innerHTML =
+      '<p style="text-align:center;">Chưa có thông báo nào.</p>';
+    return;
+  }
 
-  sortedData.forEach((news, index) => {
-    const newsObj = {
-      t: news.tieude || "Thông báo",
-      d: formatFullDate(news.ngaydang || news.ngay),
-      s: news.sapo || "",
-      c: (news.noidung || "").replace(/\n/g, "<br>"),
-      i: news.linkanh ? convertDriveLink(news.linkanh) : LOGO_BG,
-      cap: news.chuthichanh || "",
-      vid: news.linkvideo || "",
-      pdf: news.linkfile || "",
-    };
-    const dataStr = btoa(unescape(encodeURIComponent(JSON.stringify(newsObj))));
-    const cardHTML = `<div class="card"><div style="width:100%; height:180px; overflow:hidden; border-radius:8px 8px 0 0;"><img src="${newsObj.i}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='${LOGO_BG}'"></div><div style="padding:15px;"><small style="color:var(--text-muted);">📅 ${newsObj.d}</small><h4 style="color:var(--blue); margin:10px 0; height:45px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${newsObj.t}</h4><button class="btn-search" style="width:100%;" onclick="showFullNews('${dataStr}')">XEM CHI TIẾT</button></div></div>`;
-    if (index < 3) latestGrid.innerHTML += cardHTML;
-    else oldGrid.innerHTML += cardHTML;
+  const sortedData = [...data].reverse(); // Bài mới nhất lên đầu
+  const displayData = showAll ? sortedData : sortedData.slice(0, 2); // Chỉ hiện 2 bài đầu nếu không bấm "Xem cũ"
+
+  let html = `<h3 class="section-title" style="text-align:left; margin-bottom:20px;">📰 TIN TỨC <span>VÕ ĐƯỜNG</span></h3>`;
+  html += `<div style="display: flex; flex-direction: column; gap: 15px;">`;
+
+  displayData.forEach((news) => {
+    // Xử lý lấy ảnh đầu tiên làm Thumbnail
+    const imgList = (news.linkanh || "")
+      .split(/[\n,]/)
+      .filter((l) => l.trim() !== "");
+    const firstImgId =
+      imgList.length > 0 ? getDriveId(imgList[0].trim()) : null;
+    const thumb = firstImgId
+      ? `https://drive.google.com/thumbnail?id=${firstImgId}&sz=w400`
+      : null;
+
+    // Tự động nhận diện nhãn (Badge)
+    let badges = "";
+    if (news.linkvideo)
+      badges += `<span style="background:#ff0000; color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-right:5px; font-weight:bold;">🎥 VIDEO</span>`;
+    if (news.linkfile)
+      badges += `<span style="background:#007bff; color:white; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">📄 TÀI LIỆU</span>`;
+
+    const dataStr = btoa(unescape(encodeURIComponent(JSON.stringify(news))));
+
+    html += `
+      <div class="news-item-card" style="display: flex; gap: 12px; background: var(--card-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.03);" onclick="showFullNews('${dataStr}')">
+          ${
+            thumb
+              ? `<img src="${thumb}" style="width: 90px; height: 90px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">`
+              : ""
+          }
+          <div style="flex-grow: 1;">
+              <div style="margin-bottom: 5px;">${badges}</div>
+              <h4 style="margin: 0 0 5px 0; color: var(--blue); font-size: 1.05rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${
+                news.tieude
+              }</h4>
+              <small style="color: var(--text-muted); font-size: 12px;">📅 ${formatFullDate(
+                news.ngay
+              )}</small>
+          </div>
+      </div>`;
   });
+
+  html += `</div>`;
+
+  // Nút xem tin cũ hơn
+  if (!showAll && sortedData.length > 2) {
+    html += `
+    <div style="text-align: center; margin-top: 20px;">
+        <button class="btn-search" style="background: white; color: var(--blue); border: 2px solid var(--blue); width: auto; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer;" onclick="loadNews(true)">
+            XEM CÁC BẢN TIN CŨ HƠN
+        </button>
+    </div>`;
+  }
+
+  container.innerHTML = html;
 }
 
-function showFullNews(encodedData) {
-  const data = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
-  let mediaHTML = "";
+function showFullNews(encoded) {
+  const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
 
-  // 1. XỬ LÝ ẢNH MINH HỌA - Đảm bảo cân đối và đẹp
-  let imageHTML = "";
-  if (data.i && !data.i.includes("placehold.co")) {
-    imageHTML = `
-            <div class="news-image-container">
-                <img src="${
-                  data.i
-                }" class="news-main-img" onerror="this.style.display='none'">
-                ${
-                  data.cap
-                    ? `<p class="news-image-caption"> ${data.cap}</p>`
-                    : ""
-                }
-            </div>`;
-  }
+  // 1. GHÉP CẶP ẢNH VÀ CHÚ THÍCH (THEO THỨ TỰ)
+  const imgList = (data.linkanh || "")
+    .split(/[\n,]/)
+    .map((s) => s.trim())
+    .filter((s) => s !== "");
+  const capList = (data.chuthichanh || "").split(/[\n,]/).map((s) => s.trim());
 
-  // 2. XỬ LÝ VIDEO
-  if (data.vid) {
-    let videoId = "";
-    if (data.vid.includes("v="))
-      videoId = data.vid.split("v=")[1].split("&")[0];
-    else if (data.vid.includes("youtu.be/"))
-      videoId = data.vid.split("youtu.be/")[1].split("?")[0];
-    if (videoId) {
-      mediaHTML += `
-                <div class="news-media-box">
-                    <div class="media-label">🎥 VIDEO NỔI BẬT</div>
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>
-                    </div>
-                    <div style="text-align:center;"><a href="${data.vid}" target="_blank" class="btn-modern-red">XEM TRÊN YOUTUBE</a></div>
-                </div>`;
-    }
-  }
+  let mediaGallery = "";
+  imgList.forEach((url, idx) => {
+    const caption = capList[idx] || "";
+    mediaGallery += `
+      <div style="margin-bottom: 20px; text-align: center;">
+        <img src="https://drive.google.com/thumbnail?id=${getDriveId(
+          url
+        )}&sz=w1000" style="width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        ${
+          caption
+            ? `<em style="display: block; margin-top: 8px; font-size: 0.95rem; color: #555; border-left: 3px solid var(--red); padding-left: 10px; font-style: italic;">${caption}</em>`
+            : ""
+        }
+      </div>`;
+  });
 
-  // 3. XỬ LÝ PDF
-  if (data.pdf) {
-    const pdfId = getDriveId(data.pdf);
-    if (pdfId) {
-      mediaHTML += `
-                <div class="news-media-box">
-                    <div class="media-label">📄 TÀI LIỆU CÔNG VĂN</div>
-                    <div class="pdf-wrapper">
-                        <iframe src="https://drive.google.com/file/d/${pdfId}/preview"></iframe>
-                    </div>
-                    <div style="text-align:center;"><a href="https://drive.google.com/file/d/${pdfId}/view" target="_blank" class="btn-modern-blue">MỞ TOÀN MÀN HÌNH</a></div>
-                </div>`;
-    }
-  }
+  // 2. XỬ LÝ VIDEO YOUTUBE (NHIỀU LINK)
+  const vidList = (data.linkvideo || "")
+    .split(/[\n,]/)
+    .filter((l) => l.trim() !== "");
+  let videoSection = vidList
+    .map((l) => {
+      const vId = l.split("v=")[1]?.split("&")[0] || l.split("/").pop();
+      return `<div style="margin-bottom:15px; border-radius:10px; overflow:hidden;"><iframe src="https://www.youtube.com/embed/${vId}" style="width:100%; height:220px; border:none;" allowfullscreen></iframe></div>`;
+    })
+    .join("");
+
+  // 3. XỬ LÝ FILE TÀI LIỆU (NHIỀU LINK)
+  const pdfList = (data.linkfile || "")
+    .split(/[\n,]/)
+    .filter((l) => l.trim() !== "");
+  let fileSection =
+    pdfList.length > 0
+      ? `<div style="background: #f0f7ff; padding: 15px; border-radius: 10px; border: 1px dashed #007bff; margin-top: 20px;"><p style="font-weight: bold; color: #007bff; margin-bottom: 10px;">📄 TÀI LIỆU CHI TIẾT:</p>`
+      : "";
+  fileSection += pdfList
+    .map(
+      (l, i) =>
+        `<a href="${l}" target="_blank" class="btn-search" style="display:block; text-align:center; background:#007bff; color:white; text-decoration:none; margin-bottom:8px; font-size:14px;">XEM FILE PDF ${
+          i + 1
+        }</a>`
+    )
+    .join("");
+  if (pdfList.length > 0) fileSection += `</div>`;
+
+  const shareUrl = window.location.href;
 
   const articleHTML = `
-    <style>
-        .news-detail-container { font-family: 'Segoe UI', Arial, sans-serif; color: #333; line-height: 1.8; }
-        .news-meta { color: #888; font-size: 13px; margin-bottom: 10px; border-bottom: 1px dotted #ccc; padding-bottom: 8px; }
-        .news-header-title { font-size: 24px; font-weight: 800; color: #b30000; line-height: 1.4; margin-bottom: 15px; }
+    <div style="text-align: left; max-height: 80vh; overflow-y: auto; padding-right: 8px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <p style="color: var(--red); font-weight: bold; font-size: 11px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">Thông báo võ đường</p>
+        <h2 style="font-size: 1.6rem; color: var(--blue); line-height: 1.3; margin-bottom: 10px;">${
+          data.tieude
+        }</h2>
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">📅 Ngày đăng: ${formatFullDate(
+          data.ngay
+        )} | 🏛️ CLB TAEKWONDO KIÊN LƯƠNG</p>
         
-        /* Cấu trúc Sapo */
-        .news-sapo { font-size: 17px; font-weight: 700; color: #444; margin-bottom: 20px; line-height: 1.6; border-left: 4px solid #b30000; padding: 10px 15px; background: #f9f9f9; }
+        <div style="line-height: 1.7; font-size: 1.05rem; color: #333;">
+            <p style="font-weight: bold; font-size: 1.15rem; margin-bottom: 20px; color: #000;">${
+              data.sapo || ""
+            }</p>
+            <div style="margin-bottom: 25px;">${(data.noidung || "").replace(
+              /\n/g,
+              "<br>"
+            )}</div>
+        </div>
 
-        /* Tối ưu hiển thị ảnh cân đối */
-        .news-image-container { margin: 20px 0; text-align: center; }
-        .news-main-img { 
-            width: 100%; 
-            max-height: 400px; /* Giới hạn chiều cao để không choán màn hình */
-            object-fit: contain; /* Giữ nguyên tỷ lệ ảnh, không bị méo hay mất chi tiết */
-            border-radius: 8px; 
-            background: #eee; /* Nền xám nhẹ nếu ảnh chưa tải kịp */
-        }
-        .news-image-caption { font-size: 14px; color: #777; margin-top: 8px; font-style: italic; }
-
-        .news-body { font-size: 16.5px; text-align: justify; white-space: pre-line; margin-bottom: 30px; }
-
-        .news-media-box { background: #f4f4f4; border-radius: 12px; padding: 15px; margin-top: 25px; border: 1px solid #eee; }
-        .media-label { font-weight: 700; font-size: 12px; color: #999; margin-bottom: 12px; text-align: center; letter-spacing: 1px; }
-        .video-wrapper, .pdf-wrapper { position: relative; width: 100%; height: 0; overflow: hidden; border-radius: 6px; background: #000; margin-bottom: 15px; }
-        .video-wrapper { padding-bottom: 56.25%; }
-        .pdf-wrapper { padding-bottom: 120%; }
-        .video-wrapper iframe, .pdf-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-
-        .btn-modern-red, .btn-modern-blue { display: inline-block; padding: 10px 20px; border-radius: 4px; font-weight: 700; text-decoration: none; font-size: 12px; }
-        .btn-modern-red { background: #cc0000; color: #fff; }
-        .btn-modern-blue { background: #0056b3; color: #fff; }
-    </style>
-    
-    <div class="news-detail-container">
-        <div class="news-meta">📅 ${data.d} | Taekwondo Kiên Lương</div>
-        <h1 class="news-header-title">${data.t}</h1>
-        <div class="news-sapo">${
-          data.s ||
-          "Thông báo từ Ban huấn luyện Câu lạc bộ võ thuật Taekwondo Kiên Lương."
-        }</div>
+        <div class="article-gallery">${mediaGallery}</div>
         
-        ${imageHTML}
-
-        <div class="news-body">${data.c}</div>
+        <div class="article-videos">${videoSection}</div>
         
-        ${mediaHTML}
-        <div style="height: 20px;"></div>
+        ${fileSection}
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 13px; font-weight: bold;">CHIA SẺ BÀI VIẾT:</span>
+            <div style="display: flex; gap: 8px;">
+                <button onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                  shareUrl
+                )}')" style="background:#3b5998; color:white; border:none; padding:6px 15px; border-radius:5px; cursor:pointer; font-size:12px;">Facebook</button>
+                <button onclick="copyToClipboard('${shareUrl}')" style="background:#444; color:white; border:none; padding:6px 15px; border-radius:5px; cursor:pointer; font-size:12px;">Copy Link</button>
+            </div>
+        </div>
     </div>`;
 
-  openModal("", articleHTML);
+  openModal("CHI TIẾT BẢN TIN", articleHTML);
 }
 
-// --- 4. TRA CỨU HỘI VIÊN (FULL INFO + ENTER) ---
+// --- 6. TRA CỨU HỘI VIÊN (ĐÃ KHỚP TÊN CỘT CỦA BẠN) ---
 async function searchHV() {
-  const input = document.getElementById("hv-input").value.trim().toLowerCase();
+  const val = document.getElementById("hv-input").value.trim().toLowerCase();
   const resDiv = document.getElementById("hv-result");
-  if (!input) return alert("Vui lòng nhập tên võ sinh!");
-  resDiv.innerHTML = '<div class="taichi"></div>';
-  const data = await fetchData("Thành viên");
-  const results = data.filter((hv) =>
-    (hv.hovaten || "").toString().toLowerCase().includes(input)
+  if (!val) return alert("Vui lòng nhập tên!");
+  const data = await fetchData("Thành viên", "hv-result");
+  const results = data.filter((d) =>
+    (d.hovaten || "").toLowerCase().includes(val)
   );
-  resDiv.innerHTML =
-    results.length > 0
-      ? ""
-      : '<p style="text-align:center; padding:20px; color:var(--red); font-weight:bold;">❌ KHÔNG TÌM THẤY DỮ LIỆU</p>';
+  if (!results.length) return (resDiv.innerHTML = "❌ Không tìm thấy võ sinh.");
 
-  results.forEach((found) => {
-    const maHV = found.mahv || found.mahoivien || "---";
-    const toChuc =
-      found.tochucthanhvien || found.tochuc || found.donvi || "---";
-    resDiv.innerHTML += `
-      <div class="martial-id-card" style="max-width: 450px; margin: 25px auto; border: 1px solid var(--border); border-top: 6px solid var(--red); border-radius: 12px; background: white; box-shadow: 0 10px 30px var(--shadow); overflow: hidden; animation: fadeIn 0.5s;">
-        <div style="background: var(--gray); padding: 12px 20px; display: flex; justify-content: space-between; align-items:center;">
-          <span style="font-weight: 700; color: var(--blue);">🆔 Mã hội viên: ${maHV}</span>
-          <button onclick="copyToClipboard('${maHV}')" style="background:var(--red); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:11px;">COPY</button>
-        </div>
-        <div style="padding: 20px; text-align: left;">
-          <p>👤 <strong>Họ tên:</strong> <span style="color:var(--red); text-transform:uppercase; font-weight:bold;">${
-            found.hovaten
-          }</span></p>
-          <p>📅 <strong>Ngày sinh:</strong> ${formatFullDate(
-            found.namsinh || found.ngaysinh
-          )}</p>
-          <p>🏢 <strong>Mã CLB:</strong> ${found.maclb || "---"}</p>
-          <p>🌍 <strong>Tổ chức:</strong> ${toChuc}</p>
-        </div>
+  let html = `<div class="grid">`;
+  results.forEach((item) => {
+    html += `
+      <div class="card" style="text-align:left; border-top:6px solid var(--red);">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px;">
+              <span style="font-weight:bold; color:var(--blue);">🆔 Mã hội viên: ${
+                item.mahoivien || "---"
+              }</span>
+              <button class="btn-search" style="padding:5px 10px; font-size:10px;" onclick="copyToClipboard('${
+                item.mahoivien
+              }')">SAO CHÉP</button>
+          </div>
+          <p>👤 <b>Họ tên:</b> ${item.hovaten}</p>
+          <p>📅 <b>Năm sinh:</b> ${formatFullDate(item.namsinh)}</p>
+          <p>🚻 <b>Giới tính:</b> ${item.gioitinh || "---"}</p>
+          <p>🏢 <b>Mã CLB:</b> ${item.maclb || "---"}</p>
+          <p>🌍 <b>Tổ chức:</b> ${item.tochucthanhvien || "---"}</p>
+      </div>`;
+  });
+  resDiv.innerHTML = html + `</div>`;
+}
+
+// --- 7. TRA CỨU THÀNH TÍCH & THĂNG CẤP (TINH CHỈNH MÀU SẮC & NÚT BẤM) ---
+
+// Hai hàm này giúp nút bấm và phím Enter hoạt động chính xác
+async function searchAchieve() {
+  await performSecureSearch(
+    "achieve",
+    "achieve-input",
+    "achieve-result",
+    "Thành tích"
+  );
+}
+async function searchPromo() {
+  await performSecureSearch(
+    "promo",
+    "promo-input",
+    "promo-result",
+    "Thăng cấp"
+  );
+}
+
+async function performSecureSearch(type, inputId, resultId, sheetName) {
+  const val = document.getElementById(inputId).value.trim().toLowerCase();
+  const resDiv = document.getElementById(resultId);
+  if (!val) return alert("Vui lòng nhập tên!");
+
+  const data = await fetchData(sheetName, resultId);
+  const results = data.filter((d) =>
+    (d.hovaten || "").toLowerCase().includes(val)
+  );
+  if (!results.length)
+    return (resDiv.innerHTML = "❌ Không tìm thấy thông tin.");
+
+  let html = `<div class="grid">`;
+
+  // Lưu kết quả vào biến tạm để hàm openSecureByIndex truy xuất an toàn
+  window.currentSearchResults = results;
+
+  results.forEach((item, index) => {
+    let icon = "📜";
+    let cardStyle = "border-top: 5px solid var(--blue);";
+
+    if (type === "achieve") {
+      // Chuẩn hóa nội dung cột huy chương để so sánh màu sắc
+      const hcRaw = (item.huychuong || "").toLowerCase();
+      const hc = hcRaw
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d");
+
+      if (hc.includes("vang") || hc.includes("hcv")) {
+        icon = "🏆";
+        cardStyle =
+          "border: 2px solid #FFD700; background: linear-gradient(145deg, #ffffff, #fffdf0); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);";
+      } else if (hc.includes("bac") || hc.includes("hcb")) {
+        icon = "🥈";
+        cardStyle =
+          "border: 2px solid #A9A9A9; background: linear-gradient(145deg, #ffffff, #f5f5f5); box-shadow: 0 4px 12px rgba(169, 169, 169, 0.3);";
+      } else if (hc.includes("dong") || hc.includes("hcd")) {
+        icon = "🥉";
+        cardStyle =
+          "border: 2px solid #CD7F32; background: linear-gradient(145deg, #ffffff, #fdf8f5); box-shadow: 0 4px 12px rgba(205, 127, 50, 0.3);";
+      } else {
+        icon = "🏅";
+        cardStyle = "border-top: 5px solid var(--red);";
+      }
+    } else {
+      // Giao diện cho mục Thăng cấp
+      cardStyle = "border-top: 5px solid #28a745; background: #fafffa;";
+    }
+
+    // HTML ĐÃ ẨN NĂM SINH - Nút bấm dùng INDEX để cực kỳ nhạy
+    html += `
+        <div class="card" style="text-align:center; ${cardStyle} padding: 25px; border-radius: 15px; position: relative;">
+            <div style="font-size:60px; margin-bottom:10px;">${icon}</div>
+            <h3 style="color:var(--blue); margin-bottom:15px; font-size: 1.2rem;">${item.hovaten}</h3>
+            <button class="btn-search" style="width:100%; border-radius: 8px; font-weight: bold; cursor: pointer;" 
+                    onclick="openSecureByIndex(${index}, '${type}')">
+                CHI TIẾT
+            </button>
+        </div>`;
+  });
+  resDiv.innerHTML = html + `</div>`;
+}
+
+// Hàm xử lý mở bảo mật an toàn bằng index
+function openSecureByIndex(index, type) {
+  if (!window.currentSearchResults || !window.currentSearchResults[index])
+    return;
+  const item = window.currentSearchResults[index];
+  const dataStr = btoa(unescape(encodeURIComponent(JSON.stringify(item))));
+  askSecurity(dataStr, type);
+}
+// --- 8. XÁC MINH BẢO MẬT & KHÓA 8 GIỜ ---
+let failCount = 0;
+function askSecurity(encoded, type) {
+  if (isSystemLocked()) return;
+  const label =
+    type === "achieve" || type === "promo"
+      ? "Vui lòng nhập mật khẩu"
+      : "Vui lòng nhập mật khẩu";
+  openModal(
+    "🔒 BẢO MẬT HỆ THỐNG",
+    `
+    <div style="text-align:center;">
+        <p style="margin-bottom:15px;">${label}</p>
+        <input type="password" id="pass-input" placeholder="*********" style="width:100%; padding:15px; text-align:center; font-size:24px; border:2px solid var(--border); border-radius:10px; margin-bottom:20px; background:var(--gray); color:var(--text);">
+        <button class="btn-search" style="width:100%;" onclick="verifySecure('${encoded}', '${type}')">XÁC NHẬN</button>
+    </div>`
+  );
+}
+
+function verifySecure(encoded, type) {
+  const p = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+  const input = document.getElementById("pass-input").value;
+  // Năm sinh lấy 4 số cuối (năm) làm mật khẩu cho Thành tích/Thăng cấp
+  const pass =
+    type === "achieve" || type === "promo"
+      ? formatFullDate(p.namsinh).split("/").pop()
+      : p.sodienthoai?.toString();
+
+  if (input === pass) {
+    failCount = 0;
+    let content = `<div style="text-align:left; line-height:2.2; font-size:16px;">`;
+    if (type === "hlv" || type === "bgk") {
+      content += `<p>👤 <b>Họ tên:</b> ${p.hovaten}</p><p>🏅 <b>Cấp đẳng:</b> ${
+        p.capdang
+      }</p><p>💼 <b>Chức vụ:</b> ${p.chucvu}</p><p>📞 <b>SĐT:</b> ${
+        p.sodienthoai
+      }</p><p>📍 <b>Địa chỉ:</b> ${p.diachi || "---"}</p>`;
+    } else if (type === "achieve") {
+      content += `<p>🏆 <b>Huy chương:</b> <span style="color:var(--red); font-weight:bold;">${p.huychuong}</span></p><p>🥋 <b>Cấp đai:</b> ${p.capdai}</p><p>📌 <b>Giải đấu:</b> ${p.tengiaidau}</p><p>📝 <b>Nội dung:</b> ${p.noidung}</p><p>📅 <b>Năm:</b> ${p.namdatgiai}</p>`;
+    } else if (type === "promo") {
+      content += `<p>✅ <b>Kết quả:</b> <span style="color:green; font-weight:bold;">${p.ketqua}</span></p><p>🥋 <b>Dự thi:</b> ${p.duthimaydang}</p><p>🏟️ <b>Kỳ thi:</b> ${p.tenkythi}</p><p>🏢 <b>Đơn vị:</b> ${p.donvitochuc}</p>`;
+    }
+    openModal("HỒ SƠ ĐẦY ĐỦ", content + `</div>`);
+  } else {
+    failCount++;
+    if (failCount >= 5) {
+      localStorage.setItem("tkd_lock_time", new Date().getTime() + 28800000);
+      alert("❌ BẠN ĐÃ NHẬP SAI 5 LẦN. HỆ THỐNG SẼ KHÓA 8 GIỜ.");
+      closeModal();
+    } else alert(`Sai thông tin xác minh! Còn ${5 - failCount} lần thử.`);
+  }
+}
+
+// --- 9. KHU TẬP (CHỈ HIỆN KHU VỰC VÀ CLB Ở NGOÀI) ---
+async function loadLocations() {
+  const grid = document.querySelector("#locations .grid");
+  const data = await fetchData("KHU TẬP", "locations");
+  if (!grid) return;
+  grid.innerHTML = "";
+  data.forEach((loc) => {
+    const locStr = btoa(unescape(encodeURIComponent(JSON.stringify(loc))));
+    grid.innerHTML += `
+      <div class="card" style="text-align:center; border-top:5px solid var(--blue);">
+          <h3 style="color:var(--blue); margin-bottom:10px;">📍 ${loc.khuvuc}</h3>
+          <p style="font-weight:bold; margin-bottom:15px;">🏠 CLB: ${loc.tencaulacbo}</p>
+          <button class="btn-search" style="width:100%;" onclick="showLocDetail('${locStr}')">XEM CHI TIẾT</button>
       </div>`;
   });
 }
 
-function handleHVEnter(e) {
-  if (e.key === "Enter") searchHV();
-}
-
-// --- 5. HLV & XÁC THỰC (GỌN NHẸ + ENTER + FIX NĂM SINH) ---
-async function loadCoaches() {
-  const grid = document.querySelector("#coaches .grid");
-  if (!grid) return;
-  grid.innerHTML = '<div class="taichi"></div>';
-  const data = await fetchData("HLV");
-  grid.innerHTML = "";
-  data.forEach((hlv) => {
-    const hlvData = btoa(unescape(encodeURIComponent(JSON.stringify(hlv))));
-    grid.innerHTML += `<div class="card"><h3 style="color:var(--blue);">🥋 ${
-      hlv.hovaten
-    }</h3><p>🎖️ Chức vụ: ${
-      hlv.chucvu || "---"
-    }</p><button class="btn-search" style="width:100%; margin-top:10px;" onclick="askHLVPassword('${hlvData}')">HỒ SƠ</button></div>`;
-  });
-}
-
-function askHLVPassword(encodedData) {
-  const authHTML = `
-    <div style="text-align:center; padding: 20px;">
-      <div style="font-size: 50px; margin-bottom: 15px;">🔒</div>
-      <h3 style="color:var(--blue); margin-bottom: 10px;">XÁC THỰC BẢO MẬT</h3>
-      <p style="font-size: 14px; color: #555; margin-bottom: 20px;">Vui lòng nhập mật khẩu</p>
-      <input type="password" id="hlv-pass-input" placeholder="********" onkeypress="handleHLVEnter(event, '${encodedData}')"
-             style="width: 100%; max-width: 250px; padding: 12px; border: 2px solid var(--border); border-radius: 8px; text-align: center; font-size: 18px; margin-bottom: 20px; outline:none;">
-      <div id="auth-loading" style="display:none; margin-bottom: 20px;"><div class="taichi" style="width:40px; height:40px; margin: 0 auto;"></div></div>
-      <button id="auth-btn" class="btn-search" style="width: 100%; max-width: 250px;" onclick="verifyHLV('${encodedData}')">XÁC NHẬN</button>
-    </div>`;
-  openModal("BẢO MẬT", authHTML);
-  setTimeout(() => document.getElementById("hlv-pass-input")?.focus(), 500);
-}
-
-function handleHLVEnter(e, data) {
-  if (e.key === "Enter") verifyHLV(data);
-}
-
-function verifyHLV(encodedData) {
-  const hlv = JSON.parse(decodeURIComponent(escape(atob(encodedData))));
-  const inputPass = document.getElementById("hlv-pass-input").value.trim();
-  const loading = document.getElementById("auth-loading");
-  const btn = document.getElementById("auth-btn");
-
-  if (!inputPass) return alert("Vui lòng nhập mật khẩu!");
-  btn.style.display = "none";
-  loading.style.display = "block";
-
-  setTimeout(() => {
-    const correctPass = hlv.sodienthoai
-      ? hlv.sodienthoai.toString().trim()
-      : "";
-    if (inputPass === correctPass) {
-      const detailHTML = `<div style="text-align:left; line-height: 2.2; padding: 5px;">
-          <p>👤 <strong>Họ tên:</strong> <span style="color:var(--red); font-weight:bold; text-transform:uppercase;">${
-            hlv.hovaten
-          }</span></p>
-          <p>🎂 <strong>Năm sinh:</strong> ${formatYearOnly(hlv.namsinh)}</p>
-          <p>🏅 <strong>Cấp đẳng:</strong> ${hlv.capdang || "---"}</p>
-          <p>🎖️ <strong>Chức vụ:</strong> ${hlv.chucvu || "---"}</p>
-          <p>📍 <strong>Địa chỉ:</strong> ${hlv.diachi || "---"}</p>
-          <p>📞 <strong>Liên hệ:</strong> <a href="tel:${
-            hlv.sodienthoai
-          }" style="color:var(--blue); font-weight:bold;">${
-        hlv.sodienthoai
-      }</a></p>
-        </div>`;
-      openModal(`<h2>🥋THÔNG TIN CHI TIẾT</h2>`, detailHTML);
-    } else {
-      loading.style.display = "none";
-      btn.style.display = "block";
-      alert("❌ Mật khẩu không chính xác!");
-    }
-  }, 800);
-}
-
-// --- 6. KHU TẬP, MODAL & ĐIỀU HƯỚNG (GIỮ NGUYÊN) ---
-async function loadLocations() {
-  const grid = document.querySelector("#locations .grid");
-  if (!grid) return;
-  grid.innerHTML = '<div class="taichi"></div>';
-  const data = await fetchData("KHU TẬP");
-  grid.innerHTML = "";
-  data.forEach((loc) => {
-    grid.innerHTML += `<div class="card"><h3 style="color:var(--red);">📍 ${loc.khuvuc}</h3><p><strong>🏠 Đơn vị:</strong> ${loc.tencaulacbo}</p><p><strong>🥋 HLV:</strong> ${loc.huanluyenvienphutrach}</p><button class="btn-search" style="width:100%; margin-top:10px; background:var(--blue);" onclick="showLocDetail(\`${loc.khuvuc}\`, \`${loc.tencaulacbo}\`, \`${loc.huanluyenvienphutrach}\`, \`${loc.thoigian}\`, \`${loc.sodienthoai}\`)">CHI TIẾT</button></div>`;
-  });
-}
-
-function showLocDetail(kv, clb, hlv, tg, sdt) {
+function showLocDetail(encoded) {
+  const loc = JSON.parse(decodeURIComponent(escape(atob(encoded))));
   openModal(
-    `<h2>📍 THÔNG TIN ĐIỂM TẬP</h2>`,
-    `<div style="text-align:left; line-height: 1.8;"><p>🚩 <strong>Khu vực:</strong> ${kv}</p><p>🏠 <strong>Đơn vị:</strong> ${clb}</p><p>🥋 <strong>HLV:</strong> ${hlv}</p><p>⏰ <strong>Thời gian:</strong> ${tg}</p><p>📞 <strong>SĐT:</strong> ${sdt}</p></div>`
+    "Chi Tiết Địa Điểm",
+    `
+    <div style="text-align:left; line-height:2.5; font-size:16px;">
+      <p>📍 <b>Khu vực:</b> ${loc.khuvuc}</p>
+      <p>🏠 <b>Tên câu lạc bộ:</b> ${loc.tencaulacbo}</p>
+      <p>👤 <b>Huấn luyện viên:</b> ${loc.huanluyenvienphutrach}</p>
+      <p>⏰ <b>Thời gian tập:</b> ${loc.thoigian}</p>
+      <p>📞 <b>Số điện thoại:</b> <a href="tel:${loc.sodienthoai}" style="color:var(--blue); text-decoration:none; font-weight:bold;">${loc.sodienthoai}</a></p>
+    </div>`
   );
 }
 
-function openModal(h, b) {
-  document.getElementById("modal-header").innerHTML = h;
-  document.getElementById("modal-body").innerHTML = b;
-  document.getElementById("infoModal").style.display = "flex";
-}
-function closeModal() {
-  document.getElementById("infoModal").style.display = "none";
-}
-
+// --- 10. ĐIỀU HƯỚNG VÀ KHỞI TẠO ---
 function toggleSection(id) {
   document.getElementById("home-content").style.display = "none";
   document
     .querySelectorAll(".content-section")
     .forEach((s) => (s.style.display = "none"));
-  document.getElementById(id).style.display = "block";
-  if (id === "coaches") loadCoaches();
-  if (id === "locations") loadLocations();
+  const target = document.getElementById(id);
+  if (target) target.style.display = "block";
   document
     .querySelectorAll(".menu-item")
-    .forEach((m) => m.classList.remove("active-item"));
+    .forEach((i) => i.classList.remove("active-item"));
   document.getElementById("nav-" + id)?.classList.add("active-item");
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (id === "coaches")
+    showSubContent(
+      "coach-list",
+      document.querySelector(".sub-menu-btn.active")
+    );
+  if (id === "locations") loadLocations();
+  window.scrollTo(0, 0);
+}
+
+function showSubContent(contentId, btn) {
+  if (!btn) return;
+  btn.parentElement
+    .querySelectorAll(".sub-menu-btn")
+    .forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+  btn
+    .closest(".container")
+    .querySelectorAll(".sub-content")
+    .forEach((c) => (c.style.display = "none"));
+  document.getElementById(contentId).style.display = "block";
+  if (contentId === "coach-list") loadPeople("HLV", "coach-list", "hlv");
+  if (contentId === "judge-list")
+    loadPeople("Ban giám khảo", "judge-list", "bgk");
+}
+
+async function loadPeople(sheetName, containerId, type) {
+  const grid = document.querySelector(`#${containerId} .grid`);
+  const data = await fetchData(sheetName, containerId);
+  if (!grid) return;
+  grid.innerHTML = "";
+  data.forEach((p) => {
+    const dataStr = btoa(unescape(encodeURIComponent(JSON.stringify(p))));
+    grid.innerHTML += `
+      <div class="card" style="text-align:center;">
+          <div style="font-size:40px;">🥋</div>
+          <h3 style="color:var(--blue);">${p.hovaten}</h3>
+          <p>🎖️ ${p.chucvu || "Thành viên"}</p>
+          <button class="btn-search" style="width:100%; margin-top:10px;" onclick="askSecurity('${dataStr}', '${type}')">XEM HỒ SƠ</button>
+      </div>`;
+  });
+}
+
+function openModal(h, b) {
+  document.getElementById(
+    "modal-header"
+  ).innerHTML = `<h2 style="color:var(--red); text-align:center;">${h}</h2>`;
+  document.getElementById("modal-body").innerHTML = b;
+  document.getElementById("infoModal").style.display = "flex";
+}
+function closeModal() {
+  document.getElementById("infoModal").style.display = "none";
+  document.getElementById("modal-body").innerHTML = "";
+}
+function copyToClipboard(t) {
+  navigator.clipboard.writeText(t).then(() => alert("✅ Đã sao chép: " + t));
 }
 
 function showHome() {
@@ -408,37 +539,214 @@ function showHome() {
     .forEach((s) => (s.style.display = "none"));
   document
     .querySelectorAll(".menu-item")
-    .forEach((m) => m.classList.remove("active-item"));
-  document.getElementById("nav-home")?.classList.add("active-item");
+    .forEach((i) => i.classList.remove("active-item"));
+  document.getElementById("nav-home").classList.add("active-item");
   loadNews();
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function toggleOldNews() {
-  const old = document.getElementById("news-grid-old");
-  const btn = document.querySelector("#more-news-btn-container button");
-  const isOpen = old.style.display === "grid";
-  old.style.display = isOpen ? "none" : "grid";
-  btn.innerHTML = isOpen ? "📂 XEM CÁC TIN CŨ HƠN" : "⬆️ THU GỌN TIN CŨ";
-}
-
-function copyToClipboard(t) {
-  navigator.clipboard.writeText(t).then(() => alert("✅ Đã sao chép: " + t));
 }
 
 window.onload = () => {
   runTypewriter();
   showHome();
-  const hvInput = document.getElementById("hv-input");
-  if (hvInput) hvInput.addEventListener("keypress", handleHVEnter);
 
+  // Khởi tạo nút Theme
   const themeBtn = document.getElementById("theme-toggle");
-  if (themeBtn)
+  if (themeBtn) {
     themeBtn.onclick = () => {
-      const next =
-        document.body.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      document.body.setAttribute("data-theme", next);
-      document.getElementById("theme-icon").innerText =
-        next === "dark" ? "☀️" : "🌙";
+      const isDark = document.body.getAttribute("data-theme") === "dark";
+      document.body.setAttribute("data-theme", isDark ? "light" : "dark");
+      document.getElementById("theme-icon").innerText = isDark ? "🌙" : "☀️";
     };
+  }
+
+  // Lắng nghe phím Enter cho các ô nhập liệu
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const act = document.activeElement.id;
+      if (act === "hv-input") searchHV();
+      if (act === "achieve-input") searchAchieve();
+      if (act === "promo-input") searchPromo();
+      if (act === "pass-input")
+        document.querySelector("#infoModal .btn-search")?.click();
+    }
+  });
 };
+
+function runTypewriter() {
+  const textElement = document.getElementById("typewriter-text");
+  const phrases = [
+    "CHÀO MỪNG BẠN ĐẾN TAEKWONDO KIÊN LƯƠNG",
+    "NƠI NUÔI DƯỠNG ĐAM MÊ VÕ THUẬT",
+    "NƠI RÈN Ý CHÍ - KỶ LUẬT - SỨC KHỎE - PHÁT TRIỂN",
+  ];
+  let pIdx = 0,
+    cIdx = 0,
+    isDel = false;
+  function type() {
+    if (!textElement) return;
+    const full = phrases[pIdx];
+    textElement.textContent = isDel
+      ? full.substring(0, cIdx - 1)
+      : full.substring(0, cIdx + 1);
+    cIdx = isDel ? cIdx - 1 : cIdx + 1;
+    let speed = isDel ? 30 : 80;
+    if (!isDel && cIdx === full.length) {
+      isDel = true;
+      speed = 3000;
+    } else if (isDel && cIdx === 0) {
+      isDel = false;
+      pIdx = (pIdx + 1) % phrases.length;
+      speed = 500;
+    }
+    setTimeout(type, speed);
+  }
+  type();
+}
+
+// ================================================================
+// HỆ THỐNG HIỂN THỊ HÌNH ẢNH & VIDEO - BẢN HOÀN HẢO 2026
+// ================================================================
+
+/**
+ * 1. Hàm xử lý link ảnh: Chấp nhận mọi loại link Drive và ảnh trực tiếp
+ */
+function formatImageUrl(url) {
+  if (!url || typeof url !== "string") return "";
+  url = url.trim();
+  if (url.includes("drive.google.com")) {
+    let id = "";
+    try {
+      // Regex bóc tách ID mạnh mẽ nhất cho Google Drive
+      const match = url.match(/\/d\/([^/]+)/) || url.match(/id=([^&]+)/);
+      id = match ? match[1] : "";
+      if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w800`;
+    } catch (e) {
+      return "";
+    }
+  }
+  return url.startsWith("http") ? url : "";
+}
+
+/**
+ * 2. Hàm tải Hình ảnh: Tự động ẩn phần trắng nếu không có chú thích
+ */
+async function loadGallery(showAll = false) {
+  const container = document.getElementById("gallery-container");
+  const section = container?.closest("section");
+  if (!container || !section) return;
+
+  // Lấy dữ liệu từ Sheet "Hình ảnh"
+  const data = await fetchData("Hình ảnh");
+  if (!data || data.length === 0) {
+    section.style.display = "none";
+    return;
+  }
+
+  section.style.display = "block";
+  const sortedData = [...data].reverse();
+  const displayData = showAll ? sortedData : sortedData.slice(0, 4);
+
+  let html = `<div class="gallery-grid">`;
+  displayData.forEach((item) => {
+    // Tìm link từ nhiều tên cột dự phòng (Ưu tiên: Link -> Link ảnh -> link)
+    const rawUrl = item["Link"] || item["Link ảnh"] || item["link"];
+    const url = formatImageUrl(rawUrl);
+
+    // Tìm chú thích từ nhiều tên cột dự phòng (Ưu tiên: Caption -> Chú thích -> caption)
+    let cap = (
+      item["Caption"] ||
+      item["Chú thích"] ||
+      item["caption"] ||
+      ""
+    ).trim();
+
+    // Điều kiện hiển thị chú thích: Không được trùng với tiêu đề cột
+    const hasContent =
+      cap !== "" &&
+      cap.toLowerCase() !== "caption" &&
+      cap.toLowerCase() !== "chú thích" &&
+      cap.toLowerCase() !== "link";
+
+    if (url) {
+      html += `
+            <div class="gallery-card ${hasContent ? "has-caption" : ""}">
+                <div class="gallery-img-wrapper">
+                    <img src="${url}" 
+                         onclick="openModal('CHI TIẾT', '<img src=\\'${url}\\' style=\\'width:100%; border-radius:10px;\\'>${
+        hasContent
+          ? `<p style=\\'margin-top:15px; font-weight:bold; color:#d32f2f; text-align:center;\\'>${cap}</p>`
+          : ""
+      }')" 
+                         loading="lazy"
+                         onerror="this.src='https://via.placeholder.com/400?text=Lỗi+Link+Ảnh'">
+                </div>
+                ${hasContent ? `<div class="media-caption">${cap}</div>` : ""}
+            </div>`;
+    }
+  });
+  html += `</div>`;
+
+  if (!showAll && sortedData.length > 4) {
+    html += `<div style="text-align:center; width:100%"><button class="btn-search" style="margin:20px auto; width:200px;" onclick="loadGallery(true)">XEM THÊM ẢNH</button></div>`;
+  }
+  container.innerHTML = html;
+}
+
+/**
+ * 3. Hàm tải Video: Đồng bộ bố cục với phần Hình ảnh
+ */
+async function loadVideos(showAll = false) {
+  const container = document.getElementById("video-container");
+  const section = container?.closest("section");
+  if (!container || !section) return;
+
+  const data = await fetchData("Video");
+  if (!data || data.length === 0) {
+    section.style.display = "none";
+    return;
+  }
+
+  section.style.display = "block";
+  const sortedData = [...data].reverse();
+  const displayData = showAll ? sortedData : sortedData.slice(0, 2);
+
+  let html = `<div class="video-grid">`;
+  displayData.forEach((item) => {
+    const link = item["Link YouTube"] || item["link"] || "";
+    let vId = "";
+    if (link.includes("v=")) {
+      vId = link.split("v=")[1].split("&")[0];
+    } else {
+      vId = link.split("/").pop().split("?")[0];
+    }
+
+    let cap = (item["Caption"] || item["Chú thích"] || "").trim();
+    const hasContent =
+      cap !== "" &&
+      cap.toLowerCase() !== "caption" &&
+      cap.toLowerCase() !== "chú thích";
+
+    if (vId) {
+      html += `
+            <div class="video-card ${hasContent ? "has-caption" : ""}">
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/${vId}" allowfullscreen></iframe>
+                </div>
+                ${hasContent ? `<div class="media-caption">${cap}</div>` : ""}
+            </div>`;
+    }
+  });
+  html += `</div>`;
+
+  if (!showAll && sortedData.length > 2) {
+    html += `<div style="text-align:center; width:100%"><button class="btn-search" style="margin:25px auto; width:200px; background:#fff; color:#004693; border:1px solid #004693;" onclick="loadVideos(true)">XEM THÊM VIDEO</button></div>`;
+  }
+  container.innerHTML = html;
+}
+
+/**
+ * 4. Khởi chạy khi trang tải xong
+ */
+document.addEventListener("DOMContentLoaded", () => {
+  loadGallery();
+  loadVideos();
+});
