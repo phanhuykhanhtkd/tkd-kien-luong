@@ -254,32 +254,65 @@ function showFullNews(encoded) {
 async function searchHV() {
   const val = document.getElementById("hv-input").value.trim().toLowerCase();
   const resDiv = document.getElementById("hv-result");
-  if (!val) return alert("Vui lòng nhập tên!");
+  
+  if (!val) return alert("Vui lòng nhập tên võ sinh!");
+  
+  // Hiển thị hiệu ứng loading trong khi chờ Google Sheets phản hồi
+  resDiv.innerHTML = '<div class="taichi-loader"></div>';
+
+  // Gọi dữ liệu từ tab "Thành viên"
   const data = await fetchData("Thành viên", "hv-result");
+  
+  // Lọc tìm kiếm theo Tên (không phân biệt hoa thường, không dấu)
   const results = data.filter((d) =>
-    (d.hovaten || "").toLowerCase().includes(val),
+    cleanKey(d.hovaten).includes(cleanKey(val))
   );
-  if (!results.length) return (resDiv.innerHTML = "❌ Không tìm thấy võ sinh.");
+
+  if (!results.length) {
+    resDiv.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">
+                          <p style="font-size:40px;">🔍</p>
+                          <p>Không tìm thấy võ sinh phù hợp.</p>
+                        </div>`;
+    return;
+  }
 
   let html = `<div class="grid">`;
+  
   results.forEach((item) => {
+    // Giải thích các Key dựa trên tiêu đề cột trong ảnh của bạn:
+    // "Mã hội viên" -> mahoivien
+    // "Họ và tên" -> hovaten
+    // "Ngày tháng năm sinh dd/mm/yyyy" -> ngaythangnamsinhddmmyyyy
+    // "Giới tính (Nam/Nữ)" -> gioitinhnamnu
+    // "Mã CLB" -> maclb
+    // "CLB/ Võ đường" -> clbvoduong
+    // "Tổ chức thành viên" -> tochucthanhvien
+    // "Mã hội viên (cũ)" -> mahoiviencu
+
     html += `
-      <div class="card" style="text-align:left; border-top:6px solid var(--red);">
-          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px;">
-              <span style="font-weight:bold; color:var(--blue);">🆔 Mã hội viên: ${
-                item.mahoivien || "---"
-              }</span>
-              <button class="btn-search" style="padding:5px 10px; font-size:10px;" onclick="copyToClipboard('${
-                item.mahoivien
-              }')">SAO CHÉP</button>
+      <div class="card" style="text-align:left; border-top:6px solid var(--blue); border-radius:15px; overflow:hidden;">
+          <div style="background:rgba(0, 70, 147, 0.05); margin:-15px -15px 15px -15px; padding:12px 15px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:bold; color:var(--blue); font-size:14px;">🆔 MÃ HV: ${item.mahoivien || "---"}</span>
+              <button class="btn-search" style="padding:4px 10px; font-size:10px; border-radius:5px;" onclick="copyToClipboard('${item.mahoivien}')">SAO CHÉP</button>
           </div>
-          <p>👤 <b>Họ tên:</b> ${item.hovaten}</p>
-          <p>📅 <b>Năm sinh:</b> ${formatFullDate(item.namsinh)}</p>
-          <p>🚻 <b>Giới tính:</b> ${item.gioitinh || "---"}</p>
-          <p>🏢 <b>Mã CLB:</b> ${item.maclb || "---"}</p>
-          <p>🌍 <b>Tổ chức:</b> ${item.tochucthanhvien || "---"}</p>
+
+          <p style="margin-bottom:8px;">👤 <b>Họ và tên:</b> <span style="text-transform:uppercase; font-weight:bold; color:var(--red); font-size:1.1rem;">${item.hovaten || "---"}</span></p>
+          
+          <p style="margin-bottom:8px;">📅 <b>Năm sinh:</b> ${formatFullDate(item.ngaythangnamsinhddmmyyyy)}</p>
+          
+          <p style="margin-bottom:8px;">🚻 <b>Giới tính:</b> ${item.gioitinhnamnu || "---"}</p>
+          
+          <p style="margin-bottom:8px;">🏢 <b>Mã CLB:</b> <span style="color:var(--blue); font-weight:bold;">${item.maclb || "---"}</span></p>
+
+          <p style="margin-bottom:8px;">🏛️ <b>Võ đường:</b> ${item.clbvoduong || "---"}</p>
+          <p style="margin-bottom:8px;">🌍 <b>Tổ chức:</b> ${item.tochucthanhvien || "---"}</p>
+          
+          <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:13px; color:var(--text-muted);">
+             🕒 <b>Mã hội viên cũ:</b> ${item.mahoiviencu || "Không có"}
+          </div>
       </div>`;
   });
+
   resDiv.innerHTML = html + `</div>`;
 }
 
