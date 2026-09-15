@@ -279,15 +279,14 @@ async function searchHV() {
   let html = `<div class="grid">`;
   
   results.forEach((item) => {
-    // Giải thích các Key dựa trên tiêu đề cột trong ảnh của bạn:
-    // "Mã hội viên" -> mahoivien
-    // "Họ và tên" -> hovaten
-    // "Ngày tháng năm sinh dd/mm/yyyy" -> ngaythangnamsinhddmmyyyy
-    // "Giới tính (Nam/Nữ)" -> gioitinhnamnu
-    // "Mã CLB" -> maclb
-    // "CLB/ Võ đường" -> clbvoduong
-    // "Tổ chức thành viên" -> tochucthanhvien
-    // "Mã hội viên (cũ)" -> mahoiviencu
+    // Giải thích các Key dựa trên tiêu đề cột từ A đến G:
+    // A: "Mã hội viên" -> mahoivien
+    // B: "Họ và Tên" -> hovaten
+    // C: "Giới tính" -> gioitinh
+    // D: "Ngày sinh" -> ngaysinh
+    // E: "Cấp/Đẳng" -> capdang
+    // F: "Mã CLB" -> maclb
+    // G: "Đơn vị" -> donvi
 
     html += `
       <div class="card" style="text-align:left; border-top:6px solid var(--blue); border-radius:15px; overflow:hidden;">
@@ -298,18 +297,15 @@ async function searchHV() {
 
           <p style="margin-bottom:8px;">👤 <b>Họ và tên:</b> <span style="text-transform:uppercase; font-weight:bold; color:var(--red); font-size:1.1rem;">${item.hovaten || "---"}</span></p>
           
-          <p style="margin-bottom:8px;">📅 <b>Năm sinh:</b> ${formatFullDate(item.ngaythangnamsinhddmmyyyy)}</p>
+          <p style="margin-bottom:8px;">🚻 <b>Giới tính:</b> ${item.gioitinh || "---"}</p>
+
+          <p style="margin-bottom:8px;">📅 <b>Ngày sinh:</b> ${formatFullDate(item.ngaysinh)}</p>
           
-          <p style="margin-bottom:8px;">🚻 <b>Giới tính:</b> ${item.gioitinhnamnu || "---"}</p>
-          
+          <p style="margin-bottom:8px;">🥋 <b>Cấp/Đẳng:</b> <span style="font-weight:bold; color:#d97706;">${item.capdang || "---"}</span></p>
+
           <p style="margin-bottom:8px;">🏢 <b>Mã CLB:</b> <span style="color:var(--blue); font-weight:bold;">${item.maclb || "---"}</span></p>
 
-          <p style="margin-bottom:8px;">🏛️ <b>Võ đường:</b> ${item.clbvoduong || "---"}</p>
-          <p style="margin-bottom:8px;">🌍 <b>Tổ chức:</b> ${item.tochucthanhvien || "---"}</p>
-          
-          <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:13px; color:var(--text-muted);">
-             🕒 <b>Mã hội viên cũ:</b> ${item.mahoiviencu || "Không có"}
-          </div>
+          <p style="margin-bottom:8px;">🏛️ <b>Đơn vị:</b> ${item.donvi || "---"}</p>
       </div>`;
   });
 
