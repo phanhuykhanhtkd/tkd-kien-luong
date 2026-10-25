@@ -3450,6 +3450,10 @@ body.plain {
 }
 .logo-sub {
   letter-spacing: 0.02em;
+  /* Chữ in hoa có dấu (Ổ, Õ, Â, Ử) cao hơn chữ thường: chừa đủ chỗ để dấu không bị cắt */
+  line-height: 1.7;
+  padding-top: 2px;
+  margin-bottom: -4px;
 }
 
 /* Icon trước nhãn thông tin (giống bản cũ) */
