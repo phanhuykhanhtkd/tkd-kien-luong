@@ -1,0 +1,22 @@
+{
+  "name": "Taekwondo Kiên Lương",
+  "short_name": "TKD Kiên Lương",
+  "description": "Cổng thông tin CLB võ thuật Taekwondo Kiên Lương: tra cứu võ sinh, lịch thi đấu, đăng ký học.",
+  "lang": "vi",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f7fb",
+  "theme_color": "#16307a",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Tra cứu võ sinh", "url": "/#/tra-cuu", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Lịch sự kiện", "url": "/#/lich", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Đăng ký học", "url": "/#/dang-ky", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

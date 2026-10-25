@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Taekwondo Kiên Lương – Cổng thông tin CLB võ thuật</title>
+    <meta
+      name="description"
+      content="Câu lạc bộ võ thuật Taekwondo Kiên Lương (từ 1998): tra cứu hồ sơ võ sinh, lịch thi thăng cấp và giải đấu, cơ sở tập luyện, đăng ký học thử miễn phí và ghi danh trực tuyến."
+    />
+    <meta name="theme-color" content="#0b3c5d" />
+    <link rel="canonical" href="https://taekwondokienluong.info/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Taekwondo Kiên Lương" />
+    <meta property="og:title" content="CLB Võ thuật Taekwondo Kiên Lương" />
+    <meta property="og:description" content="Rèn ý chí – kỷ luật – sức khỏe. Đăng ký học thử miễn phí, tra cứu võ sinh, lịch thi đấu." />
+    <meta property="og:image" content="https://taekwondokienluong.info/assets/og.jpg" />
+    <meta property="og:url" content="https://taekwondokienluong.info/" />
+    <meta property="og:locale" content="vi_VN" />
+
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="TKD Kiên Lương" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://script.google.com" />
+    <link rel="preload" as="image" href="/assets/cover-900.webp" type="image/webp" media="(max-width: 900px)" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script type="module" src="/js/app.js"></script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SportsOrganization",
+        "name": "Câu lạc bộ võ thuật Taekwondo Kiên Lương",
+        "sport": "Taekwondo",
+        "foundingDate": "1998",
+        "url": "https://taekwondokienluong.info/",
+        "logo": "https://taekwondokienluong.info/assets/logo.png",
+        "address": { "@type": "PostalAddress", "addressLocality": "Kiên Lương", "addressRegion": "An Giang", "addressCountry": "VN" },
+        "sameAs": ["https://youtube.com/@clbvothuattaekwondokienluong"]
+      }
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Bỏ qua, đến nội dung chính</a>
+
+    <!-- MÀN HÌNH CHỜ -->
+    <div id="loading-screen" aria-hidden="true">
+      <div class="loading-content">
+        <div class="ld-ring">
+          <div class="taichi-loader"></div>
+        </div>
+        <p class="ld-brand">TAEKWONDO KIÊN LƯƠNG</p>
+        <div class="ld-bar"><span></span></div>
+        <p class="ld-text">ĐANG TẢI DỮ LIỆU</p>
+      </div>
+    </div>
+    <div id="topbar" aria-hidden="true"></div>
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="logo" href="#/" aria-label="Taekwondo Kiên Lương – Trang chủ">
+          <img src="/assets/logo-96.png" alt="Logo Taekwondo Kiên Lương" width="46" height="46" />
+          <span class="logo-text-group">
+            <span class="logo-sub">CỔNG THÔNG TIN ĐIỆN TỬ CÂU LẠC BỘ VÕ THUẬT</span>
+            <span class="logo-main">TAEKWONDO KIÊN LƯƠNG</span>
+          </span>
+        </a>
+        <nav class="top-nav" aria-label="Điều hướng chính">
+          <a href="#/" data-route="home">Trang chủ</a>
+          <a href="#/tra-cuu" data-route="lookup">Tra cứu</a>
+          <a href="#/lich" data-route="events">Lịch</a>
+          <a href="#/co-so" data-route="clubs">Cơ sở</a>
+          <a href="#/dang-ky" data-route="enroll" class="top-nav-cta">Đăng ký học</a>
+        </nav>
+        <div class="nav-controls">
+          <button type="button" class="theme-btn install-btn" data-action="install" aria-label="Cài ứng dụng" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14" /></svg>
+          </button>
+          <button type="button" id="theme-toggle" class="theme-btn" data-action="theme" aria-label="Chuyển sang giao diện tối">
+            <span class="i-moon" aria-hidden="true">🌙</span><span class="i-sun" aria-hidden="true">☀️</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+
+
+      <!-- ===================== TRANG CHỦ ===================== -->
+      <div class="view" data-view="home">
+        <!-- ===================== HERO + CHỮ CHẠY ===================== -->
+      <section class="hero">
+        <div class="hero-content">
+          <h1 class="sr-only">Câu lạc bộ võ thuật Taekwondo Kiên Lương</h1>
+          <p id="typewriter-text" class="typewriter" aria-hidden="true"></p>
+        </div>
+      </section>
+        <section id="values" class="section">
+          <div class="container">
+            <h2 class="section-title"><span class="st">GIÁ TRỊ <span class="hl">CỐT LÕI</span></span></h2>
+            <div class="grid value-grid">
+              <article class="card value-card">
+                <h3>🔥HÌNH THÀNH VÀ PHÁT TRIỂN</h3>
+                <p class="clamp">Khởi nguồn từ năm 1998 trên mảnh đất Kiên Lương, tỉnh Kiên Giang, Câu lạc bộ võ thuật Taekwondo Kiên Lương đã đặt những viên gạch đầu tiên cho một hành trình huyền thoại kéo dài gần ba thập kỷ dưới sự dẫn dắt tận tâm của Võ sư Trần Thanh Ninh. Xuất phát điểm từ một lớp võ đơn sơ với cơ sở vật chất còn nhiều thiếu thốn, nhưng bằng ý chí sắt đá và tâm huyết cháy bỏng với võ học, Thầy Trần Thanh Ninh đã biến nơi đây thành một "cái nôi" rèn luyện bản lĩnh và nhân cách cho hàng ngàn thế hệ môn sinh. Trải qua chặng đường dài từ năm 1998 đến nay, câu lạc bộ không chỉ dừng lại ở việc truyền thụ những kỹ thuật, kỹ năng, những cú đá đẹp và đầy uy lực hay những bài quyền uyển chuyển của bộ môn Taekwondo, mà quan trọng hơn, đó là quá trình hun đúc nên "chữ Đạo" trong lòng mỗi võ sinh. Dưới mái nhà chung này, kỷ luật thép được giao thoa hoàn hảo với lòng nhân ái, giúp các thế hệ trẻ không chỉ vững vàng trên sàn đấu mà còn kiên cường, tử tế trước những sóng gió của cuộc đời. Sự phát triển bền bỉ của câu lạc bộ suốt từ cuối thế kỷ 20 đến nay chính là minh chứng sống động cho một di sản được xây dựng bằng mồ hôi, nước mắt và niềm tin tuyệt đối vào sức mạnh của võ đạo.</p>
+                <button type="button" class="read-more" data-action="read-more" aria-expanded="false">Xem tiếp...</button>
+              </article>
+              <article class="card value-card">
+                <h3>🔥TÔN SƯ TRỌNG ĐẠO</h3>
+                <p class="clamp">Trong hành trình chinh phục võ học, Tôn sư trọng đạo không chỉ là một nghi thức truyền thống mà là giá trị cốt lõi kiến tạo nên bản lĩnh của một chính nhân quân tử. Người thầy không chỉ truyền thụ kỹ thuật mà còn là biểu tượng của trí tuệ và đạo sống; vì vậy, tôn trọng thầy chính là tôn trọng cội nguồn tri thức và nền tảng đạo đức của chính mình. Tại võ đường, lễ nghi chính là kỷ cương, đức hạnh chính là sức mạnh. Mỗi võ sinh phải khắc ghi tâm niệm: "Học võ trước hết là học làm người", lấy sự khiêm cung làm thước đo sự trưởng thành, lấy chính đạo làm kim chỉ nam để khắc chế cái tôi và phụng sự lẽ phải. Chỉ khi đạo đức vững vàng như bàn thạch, võ thuật mới thực sự trở thành công cụ của công lý và lòng nhân ái, giúp võ sinh đứng vững trên đỉnh cao của cả võ nghiệp lẫn cuộc đời.</p>
+                <button type="button" class="read-more" data-action="read-more" aria-expanded="false">Xem tiếp...</button>
+              </article>
+              <article class="card value-card">
+                <h3>🔥ĐAM MÊ – KỶ LUẬT – ĐOÀN KẾT – BẢN LĨNH – PHÁT TRIỂN</h3>
+                <p class="clamp">Nếu Đam mê là ngọn lửa khởi nguyên thắp sáng khát vọng, thì Kỷ luật chính là lò luyện thép giúp ngọn lửa ấy cháy bền bỉ qua năm tháng. Đam mê cho ta lý do để bắt đầu, nhưng chỉ có kỷ luật khắt khe mới đưa ta đi đến tận cùng của sự tinh hoa. Trong nghệ thuật sống, cá nhân chỉ thực sự mạnh mẽ khi đặt mình trong sự Đoàn kết với đồng đội. Một tập thể vững mạnh là môi trường lý tưởng nhất để rèn giũa Bản lĩnh – khả năng giữ vững sự tĩnh lặng của nội tâm trước bão tố, là sự kiên định không lùi bước trước nghịch cảnh của cuộc đời. Đích đến cuối cùng của võ học không phải là tấm đai hay chiếc huy chương, mà là sự Phát triển toàn diện về nhân cách. Đó là quá trình tiến hóa không ngừng nghỉ để trở thành một phiên bản ưu tú hơn của chính mình ngày hôm qua: Mạnh mẽ hơn về thể chất, mẫn tiệp hơn về trí tuệ và cao thượng hơn về tâm hồn.</p>
+                <button type="button" class="read-more" data-action="read-more" aria-expanded="false">Xem tiếp...</button>
+              </article>
+            </div>
+          </div>
+        </section>
+        <section id="albums" class="section bg-light">
+          <div class="container">
+            <h2 class="section-title"><span class="st">HÌNH ẢNH <span class="hl">HOẠT ĐỘNG</span></span></h2>
+            <div id="album-list" class="photo-preview"></div>
+          </div>
+        </section>
+        <section id="videos" class="section" hidden>
+          <div class="container">
+            <h2 class="section-title"><span class="st">VIDEO <span class="hl">HOẠT ĐỘNG</span></span></h2>
+            <div id="video-list" class="video-grid"></div>
+          </div>
+        </section>
+        <section id="news" class="section">
+          <div class="container narrow">
+            <h2 class="section-title"><span class="st">TIN TỨC <span class="hl">VÕ ĐƯỜNG</span></span></h2>
+            <div id="news-list" class="news-list" aria-live="polite"></div>
+          </div>
+        </section>
+        <section id="home-event-wrap" class="section section-tight">
+          <div class="container narrow"><div id="home-event" hidden></div></div>
+        </section>
+        <section id="belts" class="section" hidden>
+          <div class="container">
+            <h2 class="section-title"><span class="st">LỘ TRÌNH <span class="hl">ĐAI</span></span></h2>
+            <p class="section-intro">Hành trình rèn luyện từ đai trắng đến đai đen.</p>
+            <div id="belt-track" class="belt-track"></div>
+          </div>
+        </section>
+        <section id="faq" class="section bg-light" hidden>
+          <div class="container narrow">
+            <h2 class="section-title"><span class="st">PHỤ HUYNH <span class="hl">THƯỜNG HỎI</span></span></h2>
+            <div id="faq-list" class="faq-list"></div>
+          </div>
+        </section>
+        <section class="section section-tight">
+          <div class="container narrow">
+            <a href="#/dang-ky" class="cta-banner">
+              <span>
+                <strong>🥋 ĐĂNG KÝ HỌC</strong>
+                <span>Học thử miễn phí hoặc ghi danh chính thức – chỉ mất 60 giây</span>
+              </span>
+              <span class="cta-arrow" aria-hidden="true">›</span>
+            </a>
+          </div>
+        </section>
+
+
+
+
+
+
+
+      </div>
+
+
+      <!-- ===================== TRA CỨU ===================== -->
+      <section class="view section bg-light" data-view="lookup" hidden>
+        <div class="container narrow">
+          <h2 class="section-title"><span class="st">TRA CỨU <span class="hl">HỘI VIÊN</span></span></h2>
+          <p class="section-intro">Mã hội viên, cấp đai, thành tích thi đấu và kết quả thăng cấp – tra một lần là thấy đủ.</p>
+          <form id="lookup-form" class="search" role="search">
+            <label for="lookup-input" class="sr-only">Họ tên hoặc mã hội viên</label>
+            <input id="lookup-input" type="search" inputmode="search" enterkeyhint="search" maxlength="60" autocomplete="off" placeholder="Nhập tên võ sinh hoặc mã hội viên..." />
+            <button type="submit" class="btn btn-primary">Tra cứu</button>
+          </form>
+          <div id="lookup-result" class="lookup-result" aria-live="polite">
+            <p class="search-placeholder">Hệ thống tra cứu mã số võ sinh, thành tích và kết quả thăng cấp.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== LỊCH ===================== -->
+      <section class="view section" data-view="events" hidden>
+        <div class="container narrow">
+          <h2 class="section-title"><span class="st">LỊCH <span class="hl">SỰ KIỆN</span></span></h2>
+          <p class="section-intro">Thi thăng cấp, giải đấu và hoạt động của câu lạc bộ.</p>
+          <div id="events-list" class="events" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- ===================== ĐỊA ĐIỂM ===================== -->
+      <section class="view section" data-view="clubs" hidden>
+        <div class="container">
+          <h2 class="section-title"><span class="st">KHU VỰC <span class="hl">TẬP LUYỆN</span></span></h2>
+          <div id="loc-list" class="loc-grid"></div>
+        </div>
+        <div class="container team-wrap" id="team">
+          <h2 class="section-title team-title"><span class="st">HỘI ĐỒNG <span class="hl">CHUYÊN MÔN</span></span></h2>
+          <div class="sub-menu-grid" role="tablist">
+            <button type="button" class="sub-menu-btn seg-btn" role="tab" aria-selected="true" data-action="team-tab" data-target="team-coaches">🥋 ĐỘI NGŨ HLV</button>
+            <button type="button" class="sub-menu-btn seg-btn" role="tab" aria-selected="false" data-action="team-tab" data-target="team-judges">⚖️ BAN GIÁM KHẢO</button>
+          </div>
+          <div id="team-coaches" class="person-grid"></div>
+          <div id="team-judges" class="person-grid" hidden></div>
+        </div>
+      </section>
+
+      <!-- ===================== GHI DANH ===================== -->
+      <section class="view section" data-view="enroll" hidden>
+          <div class="enroll-widget" id="enroll">
+            <div class="enroll-bar">
+              <span class="enroll-bar-icon" aria-hidden="true">🥋</span>
+              <span class="enroll-bar-titles">
+                <span class="enroll-bar-title">GHI DANH NHẬP HỌC</span>
+                <span id="en-step-label" class="enroll-bar-sub">Bước 1/3 · Chọn cơ sở</span>
+              </span>
+            </div>
+            <div class="enroll-body">
+              <div id="en-head" class="en-head">
+                <div id="en-progress" class="en-progress" aria-hidden="true">
+                  <span class="en-dot active">1</span><span class="en-dot">2</span><span class="en-dot">3</span>
+                </div>
+              </div>
+            <form id="en-form" novalidate>
+              <div class="hp" aria-hidden="true">
+                <label>Website <input type="text" id="en-website" tabindex="-1" autocomplete="off" /></label>
+              </div>
+
+              <!-- BƯỚC 1 -->
+              <div class="en-step" data-step="1">
+                <div class="seg seg-type" role="group" aria-label="Hình thức đăng ký">
+                  <button type="button" class="seg-btn" data-action="en-type" data-type="official" aria-pressed="true">Đăng ký chính thức</button>
+                  <button type="button" class="seg-btn" data-action="en-type" data-type="trial" aria-pressed="false">Học thử miễn phí</button>
+                </div>
+                <p id="en-type-note" class="small muted"></p>
+                <fieldset class="fieldset">
+                  <legend>Chọn cơ sở tập luyện</legend>
+                  <div id="en-clubs" class="club-list"></div>
+                  <p id="en-club-error" class="field-error" aria-live="polite"></p>
+                </fieldset>
+                <div class="en-actions">
+                  <button type="button" class="btn btn-primary btn-lg btn-block" data-action="en-step" data-step="2">Tiếp tục</button>
+                </div>
+              </div>
+
+              <!-- BƯỚC 2 -->
+              <div class="en-step" data-step="2" hidden>
+                <p class="group-label">Võ sinh</p>
+                <div class="field">
+                  <label for="en-sName">Họ và tên võ sinh</label>
+                  <input id="en-sName" type="text" maxlength="60" autocomplete="off" autocapitalize="words" enterkeyhint="next" placeholder="VD: Nguyễn Văn An" />
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label for="en-sDOB">Ngày sinh</label>
+                    <input id="en-sDOB" type="date" />
+                    <p class="field-error" aria-live="polite"></p>
+                  </div>
+                  <div class="field">
+                    <label for="en-height">Chiều cao (cm)</label>
+                    <input id="en-height" type="number" inputmode="numeric" min="60" max="220" placeholder="Không bắt buộc" />
+                    <p class="field-error" aria-live="polite"></p>
+                  </div>
+                </div>
+                <p class="group-label">Phụ huynh</p>
+                <div class="field">
+                  <label for="en-pName">Họ và tên phụ huynh</label>
+                  <input id="en-pName" type="text" maxlength="60" autocomplete="name" autocapitalize="words" enterkeyhint="next" />
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+                <div class="field">
+                  <label for="en-phone">Số điện thoại / Zalo</label>
+                  <input id="en-phone" type="tel" inputmode="tel" maxlength="14" autocomplete="tel" enterkeyhint="done" placeholder="0912 345 678" />
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+                <button type="button" class="link-btn" data-action="en-email-toggle">+ Nhận xác nhận qua email</button>
+                <div id="en-email-wrap" class="field" hidden>
+                  <label for="en-email">Email <span class="opt">(không bắt buộc)</span></label>
+                  <input id="en-email" type="email" inputmode="email" maxlength="100" autocomplete="email" />
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+                <div class="en-actions">
+                  <button type="button" class="btn btn-ghost btn-lg" data-action="en-step" data-step="1">Quay lại</button>
+                  <button type="button" class="btn btn-primary btn-lg" data-action="en-step" data-step="3">Tiếp tục</button>
+                </div>
+              </div>
+
+              <!-- BƯỚC 3 -->
+              <div class="en-step" data-step="3" hidden>
+                <div id="en-summary" class="summary"></div>
+                <div id="en-official">
+                  <div id="en-size-field" class="field">
+                    <label for="en-size">Võ phục</label>
+                    <select id="en-size"></select>
+                    <p class="hint"><span id="en-size-hint"></span> <button type="button" class="link-btn" data-action="size-guide">Bảng size</button></p>
+                  </div>
+                  <fieldset class="fieldset">
+                    <legend>Hình thức thanh toán</legend>
+                    <label class="radio-card">
+                      <input type="radio" name="en-pay" id="en-pay-transfer" value="transfer" checked />
+                      <span><strong>Chuyển khoản</strong><small>Mã QR có sẵn số tiền hiện ra sau khi gửi</small></span>
+                    </label>
+                    <label class="radio-card">
+                      <input type="radio" name="en-pay" id="en-pay-cash" value="cash" />
+                      <span><strong>Đóng tại lớp</strong><small>Thanh toán trực tiếp với HLV</small></span>
+                    </label>
+                  </fieldset>
+                </div>
+                <div class="field field-check">
+                  <label class="check">
+                    <input type="checkbox" id="en-consent" />
+                    <span>Tôi đồng ý để CLB lưu trữ thông tin trên nhằm liên hệ, xếp lớp và quản lý võ sinh (<a href="/chinh-sach-bao-mat.html" target="_blank">chính sách bảo mật</a>).</span>
+                  </label>
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+                <p id="en-alert" class="alert" role="alert" hidden></p>
+                <div class="en-actions">
+                  <button type="button" class="btn btn-ghost btn-lg" data-action="en-step" data-step="2">Quay lại</button>
+                  <button type="submit" id="en-submit" class="btn btn-primary btn-lg">Xác nhận đăng ký</button>
+                </div>
+              </div>
+            </form>
+
+              <div id="en-success" class="en-success" hidden></div>
+              <div id="en-sending" class="en-sending" role="status" hidden>
+                <div class="taichi-loader sm" aria-hidden="true"></div>
+                <p>Đang gửi hồ sơ…</p>
+                <small>Vui lòng không đóng trang</small>
+              </div>
+            </div>
+          </div>
+        </section>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer">
+      <div class="footer-content">
+        <h2 class="footer-title">LIÊN HỆ &amp; FANPAGE</h2>
+        <div class="footer-divider"></div>
+        <div class="social-links">
+          <a href="https://web.facebook.com/share/1C3LaNeUd5/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-item">🔵 Fanpage Cơ sở Ba Hòn - Bình An</a>
+          <a href="https://web.facebook.com/share/1HLMztSAzY/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-item">🔵 Fanpage Cơ sở Kiên Lương</a>
+          <a href="https://web.facebook.com/share/1CAjRxoDCu/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-item">🔵 Fanpage Trường THPT Kiên Lương</a>
+          <a href="https://web.facebook.com/share/1MsBDYZmyB/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-item">🔵 Fanpage Cơ sở Hòa Điền</a>
+          <a href="https://youtube.com/@clbvothuattaekwondokienluong?si=IHa1oQWY7sgaSR2_" target="_blank" rel="noopener noreferrer" class="social-item social-youtube">🔴 Kênh Youtube Võ Đường</a>
+          <a href="https://collshp.com/haryk?view=storefront" target="_blank" rel="noopener noreferrer" class="social-item social-shop">🧡 Shop Võ Phục</a>
+        </div>
+        <p class="contact-info">📍 Địa chỉ: Xã Kiên Lương, Tỉnh An Giang</p>
+        <div class="footer-bottom-divider"></div>
+        <p class="copyright">© <span id="year">2026</span> Câu lạc bộ võ thuật Taekwondo Kiên Lương<br /><small>Xin chào bạn!</small></p>
+        <p class="footer-links"><a href="/chinh-sach-bao-mat.html">Chính sách bảo mật</a><button type="button" class="link-btn install-btn" data-action="install" hidden>Cài ứng dụng</button></p>
+      </div>
+    </footer>
+
+
+    <!-- ===================== THANH ĐIỀU HƯỚNG DƯỚI (ĐIỆN THOẠI) ===================== -->
+    <nav class="bottom-nav" aria-label="Điều hướng">
+      <a href="#/" data-route="home">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" /></svg>
+        <span>Trang chủ</span>
+      </a>
+      <a href="#/tra-cuu" data-route="lookup">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        <span>Tra cứu</span>
+      </a>
+      <a href="#/dang-ky" data-route="enroll" class="nav-cta">
+        <span class="nav-cta-ring"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
+        <span>Đăng ký</span>
+      </a>
+      <a href="#/lich" data-route="events">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></svg>
+        <span>Lịch</span>
+      </a>
+      <a href="#/co-so" data-route="clubs">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
+        <span>Cơ sở</span>
+      </a>
+    </nav>
+
+    <!-- ===================== LỚP PHỦ ===================== -->
+    <div id="sheet" class="sheet" hidden>
+      <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <div class="sheet-head">
+          <span class="sheet-grip" aria-hidden="true"></span>
+          <h2 id="sheet-title"></h2>
+          <button type="button" class="sheet-close icon-btn" data-action="close" aria-label="Đóng">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        <div id="sheet-body" class="sheet-body"></div>
+      </div>
+    </div>
+
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Xem ảnh" hidden>
+      <button type="button" class="lb-close icon-btn" data-action="close" aria-label="Đóng">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+      <span class="lb-count"></span>
+      <button type="button" class="lb-nav lb-prev icon-btn" data-action="lb-prev" aria-label="Ảnh trước">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+      </button>
+      <img class="lb-img" alt="" />
+      <button type="button" class="lb-nav lb-next icon-btn" data-action="lb-next" aria-label="Ảnh sau">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+      </button>
+      <p class="lb-cap"></p>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <button id="back-to-top" type="button" data-action="back-to-top" aria-label="Lên đầu trang">↑</button>
+
+    <noscript><p class="noscript">Vui lòng bật JavaScript để sử dụng đầy đủ trang web.</p></noscript>
+  </body>
+</html>

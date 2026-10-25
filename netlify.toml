@@ -1,0 +1,67 @@
+# =====================================================================
+#  CẤU HÌNH NETLIFY – header bảo mật & bộ nhớ đệm
+#  (Web tĩnh, không cần lệnh build)
+# =====================================================================
+[build]
+  publish = "."
+
+# ---------- Header bảo mật cho mọi trang ----------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+
+# ---------- Bộ nhớ đệm ----------
+# HTML, service worker, manifest: luôn kiểm tra bản mới
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# CSS/JS: lưu 1 giờ, sau đó kiểm tra lại (đổi code là phụ huynh nhận bản mới nhanh)
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Ảnh, biểu tượng: lưu 30 ngày
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# ---------- Đường dẫn ----------
+# Link cũ / gõ nhầm → trang 404 thân thiện
+[[redirects]]
+  from = "/dang-ky"
+  to = "/#/dang-ky"
+  status = 302
+[[redirects]]
+  from = "/tra-cuu"
+  to = "/#/tra-cuu"
+  status = 302
+[[redirects]]
+  from = "/lich"
+  to = "/#/lich"
+  status = 302
