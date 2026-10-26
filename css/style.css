@@ -4268,3 +4268,9 @@ body.plain {
 :root[data-theme="dark"] .loc-card {
   border-top-color: #3498db;
 }
+
+/* Menu máy tính: không cho chữ xuống dòng ("Trang chủ", "Đăng ký học") */
+.top-nav a,
+.header-cta {
+  white-space: nowrap;
+}

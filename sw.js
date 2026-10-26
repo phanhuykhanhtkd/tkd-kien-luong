@@ -2,7 +2,7 @@
    SERVICE WORKER – giúp web mở nhanh như ứng dụng và xem được khi mạng yếu.
    Mỗi lần sửa CSS/JS, tăng số VERSION lên 1 để điện thoại tải bản mới.
    ===================================================================== */
-const VERSION = "v6";
+const VERSION = "v7";
 const CACHE = `tkd-${VERSION}`;
 const CORE = [
   "/",

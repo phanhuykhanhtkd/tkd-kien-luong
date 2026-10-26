@@ -240,7 +240,6 @@ function renderAlbums() {
   st.photos = st.albums.flatMap((a) => a.photos).slice(0, 3);
   sec.hidden = !st.photos.length;
   if (!st.photos.length) return;
-  const total = st.albums.reduce((n, a) => n + a.photos.length, 0);
   $("#album-list").innerHTML = `
     <div class="photo-mosaic n${st.photos.length}">
       ${st.photos
@@ -252,7 +251,7 @@ function renderAlbums() {
         .join("")}
     </div>
     <button type="button" class="btn btn-outline btn-block more-photos" data-action="all-albums">
-      Xem tất cả hình ảnh <span class="muted">(${total} ảnh · ${st.albums.length} album)</span> ›
+      Xem tất cả hình ảnh ›
     </button>`;
 }
 
