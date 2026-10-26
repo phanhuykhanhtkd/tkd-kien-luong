@@ -31,15 +31,15 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# CSS/JS: lưu 1 giờ, sau đó kiểm tra lại (đổi code là phụ huynh nhận bản mới nhanh)
+# CSS/JS: luôn hỏi lại máy chủ (file không đổi thì không tải lại, rất nhẹ) → sửa code là thấy ngay
 [[headers]]
   for = "/css/*"
   [headers.values]
-    Cache-Control = "public, max-age=3600, must-revalidate"
+    Cache-Control = "public, max-age=0, must-revalidate"
 [[headers]]
   for = "/js/*"
   [headers.values]
-    Cache-Control = "public, max-age=3600, must-revalidate"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Ảnh, biểu tượng: lưu 30 ngày
 [[headers]]

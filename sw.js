@@ -2,7 +2,7 @@
    SERVICE WORKER – giúp web mở nhanh như ứng dụng và xem được khi mạng yếu.
    Mỗi lần sửa CSS/JS, tăng số VERSION lên 1 để điện thoại tải bản mới.
    ===================================================================== */
-const VERSION = "v7";
+const VERSION = "v8";
 const CACHE = `tkd-${VERSION}`;
 const CORE = [
   "/",
@@ -25,7 +25,7 @@ const CORE = [
 ];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE.map((u) => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (e) => {
@@ -59,7 +59,23 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // CSS, JS, ảnh: dùng bản lưu ngay, đồng thời cập nhật ngầm
+  // CSS, JS: ưu tiên bản mới trên mạng (sửa code là thấy ngay), mất mạng thì dùng bản lưu
+  if (/\.(css|js)$/.test(url.pathname)) {
+    e.respondWith(
+      fetch(req, { cache: "no-cache" })
+        .then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy));
+          }
+          return res;
+        })
+        .catch(() => caches.match(req)),
+    );
+    return;
+  }
+
+  // Ảnh, biểu tượng: dùng bản lưu ngay, đồng thời cập nhật ngầm
   e.respondWith(
     caches.match(req).then((cached) => {
       const network = fetch(req)
